@@ -1,0 +1,728 @@
+PROPOSAL INOVASI DIGITAL
+KOMPETISI OLIVIA UNESA 2026
+"
+Vitora: Gamified Self-Improvement Platform Berbasis Digital untuk Meningkatkan Kesehatan Mental, Sosial, dan Fisik Remaja
+"
+Disusun Oleh :
+‘Abdullah Abil Abi Yoso
+V3925001
+Ketua
+Julia Rahma Nurmawati
+V3925009
+Anggota
+Moh. Syaeful Effendi
+V3924019
+Anggota
+PROGRAM
+ 
+STUDI
+ 
+D3
+ 
+TEKNIK
+ 
+INFORMATIKA
+ 
+KAMPUS
+ 
+KAB.
+ 
+MADIUN 
+SEKOLAH VOKASI
+UNIVERSITAS
+ 
+SEBELAS
+ 
+MARET 
+2026
+DAFTAR ISI
+DAFTAR ISI
+i
+DAFTAR GAMBAR
+ii
+DAFTAR TABEL
+iii
+DAFTAR LAMPIRAN
+iv
+BAB 1  PENDAHULUAN
+1
+1.1
+Latar Belakang
+1
+1.2
+Rumusan Masalah
+2
+1.3
+Tujuan
+2
+BAB II  KONSEP DAN LANDASAN TEORITIS
+3
+2.1
+Tinjauan Literatur Singkat
+3
+2.2
+Konsep Solusi Inovasi
+4
+BAB III  DESAIN DAN PENGEMBANGAN PROTOTIPE
+5
+3.1
+Mekanisme Sistem
+5
+3.2
+Metode Pengembangan dan Evaluasi
+7
+BAB IV  DAMPAK DAN IMPLEMENTASI
+10
+4.1
+Potensi Dampak dan Indikator Keberhasilan
+10
+4.2
+Kelayakan Implementasi
+11
+REFERENSI
+13
+DAFTAR GAMBAR
+Gambar 1. User Flow Vitora
+6
+Gambar 2. Metode Waterfall
+8
+Gambar 3. Poster Vitora.
+15
+Gambar 4. Tampilan Halaman Login Vitora
+24
+Gambar 5. Tampilan Halaman Register Vitora
+24
+Gambar 6. Tampilan Halaman Dahboard Vitora
+25
+Gambar 7. Tampilan Halaman Mission Tutorial Vitora
+25
+Gambar 8. Tampilan Halaman List Mission Vitora
+26
+Gambar 9. Tampilan Halaman Quest List
+26
+Gambar 10. Tampilan Halaman Pemilihan Avatar Vitora
+27
+Gambar 11. Tampilan Halaman Leaderboard Vitora
+27
+Gambar 12. Alur Inovasi Pembuatan Vitora
+28
+DAFTAR TABEL
+Tabel 1. Fitur Inovatif Vitora.
+4
+Tabel 2. Instrumen dan Hasil Evaluasi System Usability Scale (SUS)
+8
+Tabel 3. Prosedur Uji Coba.
+9
+Tabel 4. Key Performance Indikator (KPI).
+11
+DAFTAR LAMPIRAN
+Lampiran 1. Poster Ukuran A2
+15
+Lampiran 2. Pernyataan Orisinalitas.
+16
+Lampiran 3. Formulir Pendaftaran.
+17
+Lampiran 4. Lembar Pengesahan Proposal.
+18
+Lampiran 5. Biodata Dosen Pendamping dan Tim.
+19
+Lampiran 6. Mockup/Prototipe (Gambar Tangkapan Layar).
+24
+Lampiran 7. Bagan Alur Proses Pembuatan Inovasi.
+28
+Lampiran 8. Data Pendukung Dan Instrumen Uji.
+29
+BAB 1 
+PENDAHULUAN
+Latar Belakang
+ 
+Perkembangan teknologi digital telah mengubah gaya hidup remaja secara signifikan. Berdasarkan data Asosiasi Penyelenggara Jasa Internet Indonesia (APJII) tahun 2025, lebih dari 79% penduduk Indonesia telah terhubung dengan internet, dengan kelompok usia remaja sebagai pengguna paling dominan. Menteri Komunikasi dan Digital Republik Indonesia, Meutya Hafid, bahkan menegaskan bahwa 48% pengguna internet Indonesia adalah remaja di bawah usia 18 tahun, dengan rata-rata durasi penggunaan mencapai lebih dari 8 jam per hari (Tribrata News, 2025). Data ini mengindikasikan bahwa remaja Indonesia hidup dalam ekosistem digital yang sangat intens, jauh melampaui batas sehat yang direkomendasikan para ahli.
+Tingginya konsumsi digital ini berbanding terbalik dengan kondisi kesehatan remaja. Riset Kesehatan Dasar (Riskesdas) (Kementrian Kesehatan RI, 2023) mencatat prevalensi gangguan mental emosional pada remaja usia 15-24 tahun mencapai 6,2%, atau sekitar 1 dari 16 remaja Indonesia mengalami masalah kesehatan mental. Laporan (World Health Organization, 2023) menyebutkan bahwa depresi dan kecemasan menjadi penyebab utama disabilitas pada kelompok usia 10-24 tahun secara global, dengan tekanan akademik, paparan media sosial tidak terkontrol, dan minimnya ruang ekspresi diri sebagai pemicu utama.
+Kondisi kesehatan fisik remaja saat ini juga menunjukkan tren yang mengkhawatirkan. Berdasarkan Survei Kesehatan Indonesia (SKI), sebanyak 58% remaja usia 10-14 tahun di Indonesia tergolong kurang melakukan aktivitas fisik. Angka ini menempatkan mereka sebagai kelompok usia yang paling tidak aktif dibandingkan dengan kelompok lainnya (Kemenkes RI dalam Tempo, 2025). Sementara itu, dari sisi kesehatan sosial, survei UNICEF Indonesia (2022) menunjukkan bahwa 45% remaja merasa kesepian meskipun aktif di media sosial. Fenomena ini mengindikasikan menurunnya kualitas interaksi sosial yang bermakna (UNICEF Indonesia, 2022).
+Menghadapi krisis multidimensi ini, berbagai solusi digital telah bermunculan, namun semuanya mengandung kelemahan mendasar yang sama: bersifat parsial dan reaktif, hanya menyentuh satu dimensi kesehatan, serta gagal membangun kebiasaan jangka panjang. Padahal, penelitian terbaru membuktikan besarnya potensi gamifikasi - mulai dari 90% pengguna yang menilai efektivitasnya tinggi (Idham et al., 2025), hingga peningkatan keberhasilan penggunaan dari 57% menjadi 82,8% pada aplikasi Fitme (Arifin & Ridlo, 2025). Sejalan dengan SDGs poin 3 tentang Good Health and Well-Being, tantangan sesungguhnya adalah membangun solusi yang mampu mengubah perilaku remaja secara holistik, konsisten, dan berkelanjutan.
+Sebagai solusi atas permasalahan tersebut, kami menghadirkan Vitora, sebuah platform self-improvement berbasis gamifikasi yang dirancang secara khusus untuk mendampingi remaja dalam membangun kebiasaan hidup sehat secara holistik. Aplikasi mobile ini menawarkan pendekatan yang komprehensif dengan mengintegrasikan tiga dimensi utama kesehatan - yakni fisik, mental, dan sosial - ke dalam antarmuka yang interaktif. Alih-alih menggunakan metode pelacakan konvensional, Vitora mengonversi proses pengembangan diri menjadi serangkaian misi harian di dunia nyata yang tingkat kesulitannya dapat disesuaikan dari level Easy hingga Expert. Setiap penyelesaian misi divalidasi secara langsung melalui sistem check-in atau unggahan bukti foto, sehingga interaksi pengguna di dalam layar secara nyata berdampak pada transformasi gaya hidup mereka sehari-hari, yang direpresentasikan melalui akumulasi poin, peningkatan level karakter, dan evolusi avatar personal.
+Lebih dari sekadar aplikasi permainan, Vitora mengimplementasikan mekanisme psikologis pembentukan kebiasaan jangka panjang untuk memastikan keberlanjutan motivasi penggunanya. Guna mencegah turunnya semangat saat pengguna sesekali gagal, platform ini dilengkapi dengan sistem checkpoint yang memitigasi hilangnya progres secara drastis. Selain itu, Vitora mengandalkan kekuatan komunitas melalui fitur sosial seperti leaderboard mingguan, dukungan antar-teman (cheer), dan streak kolektif untuk membangun iklim akuntabilitas yang positif. Poin yang dikumpulkan pengguna dapat digunakan untuk kustomisasi avatar, membuka item eksklusif dalam game, serta meningkatkan level karakter - menciptakan siklus motivasi yang menyenangkan dan berkelanjutan layaknya game RPG pada umumnya. Dengan sistem reward berbasis game ini, Vitora diharapkan mampu menjadi mitra digital yang efektif, menyenangkan, dan relevan bagi remaja dalam mencapai kualitas hidup yang lebih optimal.
+Rumusan Masalah
+ 
+Berdasarkan latar belakang di atas, rumusan masalah yang diangkat adalah:
+Bagaimana merancang platform digital berbasis gamifikasi yang mampu membantu remaja membangun kebiasaan sehat secara konsisten?
+Bagaimana cara menerapkan aspek kesehatan mental,sosial, dan fisik dalam satu sistem yang personal dan interaktif
+?
+Bagaimana tingkat kemudahan pengguna dalam menggunakan aplikasi game Vitora?
+Tujuan
+ 
+Tujuan pengembangan inovasi digital Vitora adalah:
+Mengembangkan game self-improvement berbasis gamifikasi yang interaktif dan mudah digunakan oleh remaja.
+Membantu remaja meningkatkan kesehatan mental, sosial, dan fisik melalui sistem misi harian yang terstruktur.
+Mengukur tingkat kemudahan pengguna dalam menggunakan aplikasi game Vitora.
+BAB II 
+KONSEP DAN LANDASAN TEORITIS
+Tinjauan Literatur Singkat
+ 
+Vitora dikembangkan berdasarkan tiga landasan teoritis utama.
+Gamification
+ adalah pendekatan yang menerapkan elemen permainan  seperti poin, reward, level, leaderboard, dan tantangan  ke dalam aktivitas non-game untuk meningkatkan motivasi dan keterlibatan pengguna. 
+(Annis et al., 2023)
+ dalam tinjauan sistematis terhadap 64 studi menunjukkan bahwa gamifikasi terbukti secara signifikan meningkatkan engagement dan perubahan perilaku kesehatan pada pengguna muda. 
+(Hamari et al., 2018)
+ juga mengonfirmasi bahwa elemen gamifikasi seperti poin dan leaderboard efektif meningkatkan motivasi intrinsik ketika dirancang dengan konteks yang tepat.
+Habit Formation
+ menjelaskan bahwa kebiasaan terbentuk melalui pengulangan aktivitas secara konsisten yang diperkuat sistem reward dan feedback. 
+(Clear, J., 2018)
+ dalam Atomic Habits menekankan bahwa perubahan perilaku yang berkelanjutan memerlukan sistem yang memecah tujuan besar menjadi tindakan kecil yang mudah dilakukan secara berulang.
+Self-Determination Theory (SDT)
+ oleh 
+(Ryan & Deci, 2020)
+ menekankan pentingnya tiga kebutuhan psikologis dasar dalam membangun motivasi intrinsik: 
+Autonomy — kebebasan memilih aktivitas; 
+Competence — rasa berkembang melalui progres yang terlihat; dan
+Relatedness — keterhubungan sosial yang bermakna. Ketiga aspek ini menjadi fondasi desain fitur Vitora.
+Dari sisi pengembangan game edukasi, 
+(Anwar, T. G. D. & Sukirman, 2024)
+ menunjukkan bahwa game berbasis Role Playing Game (RPG) dengan sistem misi bertingkat dan reward visual mampu meningkatkan engagement dan konsistensi pengguna secara signifikan.
+Konsep Solusi Inovasi
+Vitora adalah aplikasi self-improvement berbasis gamifikasi yang membantu remaja meningkatkan kualitas hidup melalui misi kesehatan mental, sosial, dan fisik yang terintegrasi dalam satu platform. 
+Fitur-fitur inovatif Vitora meliputi:
+Tabel 
+1
+ Fitur Inovatif Vitora.
+No
+Nama Fitur
+Deskripsi sigkat
+1
+Sistem Misi Personal
+Sistem menghasilkan misi yang berbeda untuk setiap pengguna berdasarkan kondisi dan kebutuhan mereka, mencakup fokus kesehatan, konteks tempat tinggal, status aktivitas harian, dan progres sebelumnya.
+2
+Quest Dunia Nyata
+Seluruh quest di Vitora dilakukan di kehidupan nyata. Pengguna harus benar-benar melakukan aktivitas sehat dan melaporkannya melalui fitur check-in atau bukti foto, sehingga game berdampak langsung pada kehidupan pengguna.
+3
+Sistem Checkpoint Progress
+Ketika pengguna gagal menyelesaikan misi, progress tidak kembali ke nol melainkan ke checkpoint terakhir yang berhasil dicapai (checkpoint pertama di poin 250, kedua di poin 500). Mekanisme ini dirancang mengurangi frustrasi dan mencegah pengguna berhenti.
+4
+Avatar Berkembang Sesuai Progres
+Pengguna memiliki avatar 2D yang dapat dikustomisasi menggunakan poin hasil menyelesaikan misi, menjadi representasi visual dari perkembangan diri pengguna.
+5
+Reward Dapat Dikonversi ke E-Wallet
+Poin dapat ditukar menjadi hadiah nyata seperti saldo e-wallet atau voucher melalui kerja sama dengan brand kesehatan, memperkuat motivasi ekstrinsik sebagai pelengkap motivasi intrinsik.
+6
+Fitur Sosial Positif
+Pengguna dapat menambahkan teman, memberikan semangat (cheer), melihat leaderboard mingguan per kategori kesehatan, dan membuat streak bersama untuk saling menjaga konsistensi.
+7
+Habit Tracking dan Daily Streak
+Vitora mencatat konsistensi pengguna setiap hari melalui sistem streak dan dashboard perkembangan visual.
+BAB III 
+DESAIN DAN PENGEMBANGAN PROTOTIPE
+Mekanisme Sistem
+Alur kerja Vitora dimulai dari Onboarding Screen dan pembuatan akun untuk memetakan identitas fisik serta konteks kehidupan pengguna. Selanjutnya pengguna membuat avatar 2D personal, lalu menjelajahi misi kesehatan harian yang disesuaikan secara dinamis dari tingkat Easy, Medium, Hard, hingga Expert. Setiap tingkatan memuat tiga pilar kesehatan: Mental Health, Social Health, dan Physical Health. Siklus berlangsung konsisten dengan perlindungan sistem checkpoint hingga avatar mencapai Final Form.
+Adapun alur pengguna (user flow) pada Vitora adalah sebagai berikut:
+Pengguna membuat akun dan mengisi data dasar (nama, usia, jenis kelamin, tinggi dan berat badan) serta data konteks (tipe tempat tinggal, status aktivitas harian).
+Pengguna memilih kategori kesehatan yang ingin difokuskan (Mental, Sosial, Fisik — bisa satu, dua, atau ketiganya).
+Sistem memproses data dan membuat avatar 2D minimalis serta profil personal pengguna.
+Sistem menentukan 10–20 misi per sub-kategori yang relevan, disusun dalam urutan berjenjang dari Easy ke Expert.
+Pengguna menjalankan misi di kehidupan nyata, lalu melakukan check-in atau submit bukti penyelesaian.
+Sistem memberikan poin sesuai tingkat kesulitan: Easy (+5), Medium (+10), Hard (+20), Expert (+50).
+Jika gagal memenuhi batas waktu, poin direset ke checkpoint terdekat, bukan ke nol.
+Poin digunakan untuk kustomisasi avatar atau dikonversi ke e-wallet.
+Pengguna berinteraksi dengan teman melalui fitur cheer, leaderboard mingguan, dan streak bersama.
+Pengguna dinyatakan menyelesaikan siklus ketika semua misi dari kategori yang dipilih berhasil diselesaikan.
+Gambar 
+1
+.
+ User Flow Vitora
+Fitur utama sistem mencakup:
+Sistem menghasilkan misi berbeda untuk setiap pengguna berdasarkan kondisi mereka.
+Pengguna memperoleh poin, level, reward, dan achievement setelah menyelesaikan misi.
+Sistem checkpoint mencegah pengguna kehilangan seluruh progress ketika gagal menyelesaikan misi.
+Poin dapat digunakan untuk membeli item avatar atau dikonversi ke e-wallet.
+Pengguna dapat menambahkan teman, memberikan semangat (cheer), dan melihat leaderboard.
+Dashboard menampilkan progress harian, streak, dan statistik perkembangan pengguna.
+Dari sisi teknis, Vitora dikembangkan sebagai aplikasi mobile lintas platform menggunakan Flutter atau React Native untuk frontend, Firebase atau Laravel untuk backend, serta MySQL atau Firebase Database untuk penyimpanan data pengguna, progress misi, leaderboard, dan habit tracking.
+Metode Pengembangan dan Evaluasi
+Tahapan Pembuatan Prototype
+Pengembangan prototipe Vitora menggunakan metode 
+Waterfall
+ yang terdiri dari lima tahap:
+Analisis Kebutuhan 
+→
+ Identifikasi kebutuhan pengguna dan fitur sistem.
+Desain 
+→
+ Perancangan karakter, UI/UX, flowchart, activity diagram, dan use case diagram.
+Pengembangan Sistem 
+→
+ Implementasi frontend dan backend.
+Testing 
+→
+ Pengujian blackbox untuk memastikan tidak ada bug kritis.
+Perbaikan 
+→
+ Revisi berdasarkan feedback pengguna.
+Gambar 
+2
+.
+ Metode Waterfall
+Metode Evaluasi 
+Tabel 
+2
+ Instrumen dan Hasil Evaluasi System Usability Scale (SUS)
+No
+Pernyataan (Item Kuesioner)
+Jenis Pernyataan
+Interpretasi Skor Akhir
+1
+Saya rasa saya akan sering menggunakan sistem ini.
+Positif (+)
+Skor SUS: 80,25
+2
+Saya merasa sistem ini terlalu rumit, padahal dapat dibuat lebih sederhana.
+Negatif (-)
+3
+Saya rasa sistem ini mudah digunakan.
+Positif (+)
+Grade: B
+4
+Saya rasa saya membutuhkan bantuan orang teknis untuk menggunakan sistem.
+Negatif (-)
+5
+Saya merasa fitur-fitur dalam sistem ini terintegrasi dengan baik.
+Positif (+)
+Adjective Rating: Good
+6
+Saya rasa ada banyak hal yang tidak konsisten pada sistem ini.
+Negatif (-)
+7
+Saya rasa orang lain akan belajar menggunakan sistem ini dengan sangat cepat.
+Positif (+)
+Kategori: Acceptable
+8
+Saya merasa sistem ini sangat membingungkan saat digunakan.
+Negatif (-)
+9
+Saya merasa sangat percaya diri saat menggunakan sistem ini.
+Positif (+)
+Target Responden:
+10
+Saya perlu belajar banyak hal sebelum dapat menggunakan sistem ini.
+Negatif (-)
+Remaja (18–25 Tahun)
+Pengujian SUS akan dilakukan setelah responden mencoba prototipe Vitora secara langsung. Target skor minimal adalah 80 yang berdasarkan standar penilaian 
+(Vlachogianni, P. & Tselios, N, 2023)
+ menempatkan sistem pada Grade B dengan kategori Good (Baik) dan termasuk dalam ambang batas acceptable bagi pengguna target.
+Prosedur Uji Coba
+Tabel 
+3
+ Prosedur Uji Coba
+No
+Tahapan
+Aktivitas Utama
+Output / Target
+1
+Rekrutmen Partisipan
+Pemilihan responden remaja usia 13–24 tahun sebagai target utama intervensi kesehatan
+Terkumpulnya basis data minimal 100 responden untuk pengujian.
+2
+Pre-test
+Pengisian kuesioner awal terkait kebiasaan sehat dan motivasi self-improvement.
+Data kondisi awal pengguna
+3
+Intervensi (Gameplay)
+Responden mencoba fitur Vitora seperti mission system, leaderboard,reward,dan habit tracking.
+Pengalaman pengguna (
+user experience
+).
+4
+Post-test
+Pengisian kuesioner setelah sesi permainan selesai.
+Data perubahan kebiasaan sehat responden 
+5
+Evaluasi Usability
+Pengisian 10 item kuesioner System Usability Scale (SUS) berdasarkan pengalaman menggunakan Vitora
+Skor akhir usability dengan target minimal 80 (Grade B).
+6
+Feedback Kualitatif
+Pelaksanaan Focus Group Discussion (FGD) terstruktur dengan perwakilan responden dari setiap kategori pengguna.
+Catatan kritis mengenai narasi, mekanik game, dan aspek visual.
+7
+Analisis Data
+Pengolahan data kuantitatif (statistik deskriptif) dan kualitatif (
+thematic analysis
+).
+Laporan akhir efektivitas dan
+ 
+kelayakan implementasi system Vitora.
+BAB IV 
+DAMPAK DAN IMPLEMENTASI
+Potensi Dampak dan Indikator Keberhasilan
+Vitora dirancang untuk memberikan dampak nyata dan terukur dalam mengatasi krisis kesehatan multidimensi remaja Indonesia. Dengan menjangkau tiga dimensi kesehatan sekaligus
+ 
+ mental, sosial, dan fisik  dalam satu platform yang terintegrasi, Vitora berpotensi menjadi instrumen perubahan perilaku yang berskala luas.
+Mekanisme Dampak: Vitora bekerja melalui mekanisme perubahan perilaku bertahap yang berbasis bukti. Pengguna diperkenalkan pada kebiasaan sehat melalui misi berdifficulty rendah terlebih dahulu untuk membangun rasa percaya diri (competence). 
+Seiring meningkatnya level, misi yang lebih menantang mendorong pengguna keluar dari zona nyaman secara gradual. Sistem checkpoint memastikan pengguna tidak mudah menyerah, sementara fitur sosial menciptakan akuntabilitas antar-teman yang terbukti menjadi salah satu faktor terkuat dalam mempertahankan kebiasaan jangka panjang (Clear, J., 2018). Sistem poin dan reward berbasis game memberikan kepuasan langsung layaknya bermain RPG, di mana setiap pencapaian misi menghasilkan item, kostum, atau lencana yang memperkuat identitas avatar pengguna.
+Dampak Jangka Pendek (0–3 bulan): Terbentuknya kebiasaan sehat awal di minimal satu dari tiga dimensi kesehatan pada pengguna aktif dalam 30 hari pertama. Pengguna mulai menyadari dan melacak kebiasaan harian mereka secara terstruktur.
+Dampak Jangka Menengah (3–12 bulan): Pengguna yang telah menyelesaikan satu siklus misi mampu mempertahankan kebiasaan tersebut secara mandiri. Terbentuknya komunitas remaja yang saling mendukung untuk hidup sehat, baik di dalam platform maupun di lingkungan nyata.
+Dampak Jangka Panjang (>1 tahun): Vitora berkontribusi pada peningkatan kualitas kesehatan generasi remaja Indonesia yang lebih sehat secara mental, sosial, dan fisik. Jika 1.000 pengguna aktif berhasil membangun minimal satu kebiasaan sehat baru, dampak kumulatif ini berkontribusi langsung pada pencapaian SDGs poin 3 di tingkat lokal. 
+Key Performance Indicators (KPI) yang terukur untuk mengevaluasi keberhasilan Vitora adalah:
+Tabel 
+4
+ Key Performance Indikator (KPI).
+No
+Key Performance Indicators
+Unit Pengukuran Target
+Target (Sasaran)
+1
+Persentase pemain yang menyelesaikan minimal 5 misi dalam 30 hari pertama penggunaan
+%
+70%
+2
+Persentase pemain yang melaporkan perubahan kebiasaan positif minimal 1 kategori Kesehatan pada follow-up 1 bulan
+%
+60%
+3
+Skor 
+System Usability Scale
+ (SUS) pada pengujian lanjutan dengan sampel minimal 100 responden
+Angka
+≥80
+4
+Rata-rata durasi waktu bermain yang dihabiskan pengguna per sesi
+Menit
+≥15 Menit
+5
+Persentase pemain yang berhasil menyelesaikan misi dari setidaknya kategori Kesehatan yang dipilih
+%
+50%
+6
+Jumlah pengguna aktif dalam 6 bulan pertama
+Angka
+1.000 pengguna aktif
+Kelayakan Implementasi
+Vitora memiliki kelayakan implementasi yang tinggi karena dirancang sebagai aplikasi mobile berbasis digital yang sesuai dengan kebiasaan remaja masa kini yang aktif menggunakan smartphone dalam kehidupan sehari-hari.
+Dari sisi teknis, pengembangan Vitora menggunakan teknologi yang umum digunakan dan mudah dikembangkan seperti Flutter atau React Native untuk frontend, Firebase atau Laravel untuk backend, serta MySQL atau Firebase Database sebagai sistem penyimpanan data. Teknologi tersebut memungkinkan pengembangan aplikasi yang fleksibel, efisien, dan scalable.
+Dari sisi pengguna, konsep gamifikasi yang diterapkan pada Vitora relevan dengan karakteristik remaja yang lebih tertarik pada sistem interaktif, visual, kompetitif, dan berbasis reward. Fitur seperti daily mission, leaderboard, sistem reward item dalam game, checkpoint, dan avatar customization dirancang untuk meningkatkan motivasi pengguna dalam membangun kebiasaan sehat secara konsisten. Mekanisme reward sepenuhnya berbasis ekosistem game Vitora itu sendiri - pengguna mendapatkan kepuasan melalui evolusi avatar, koleksi item eksklusif, dan pencapaian level baru, menciptakan loop gameplay yang adiktif namun positif.
+Vitora juga memiliki peluang implementasi yang luas di berbagai ekosistem, antara lain: 
+lingkungan pendidikan seperti sekolah dan kampus sebagai media pendukung edukasi kesehatan siswa dan mahasiswa, 
+komunitas remaja dan karang taruna sebagai program pengembangan diri berbasis digital, 
+program kesehatan pemerintah daerah sebagai instrumen intervensi perubahan perilaku remaja, serta 
+kemitraan dengan brand kesehatan dan startup digital health sebagai model bisnis yang berkelanjutan.
+Dari sisi pengembangan jangka panjang, Vitora memiliki peluang untuk dikembangkan lebih lanjut melalui integrasi artificial intelligence (AI) untuk personalisasi misi yang lebih cerdas, integrasi dengan wearable device untuk pemantauan aktivitas otomatis, serta perluasan kerja sama dengan institusi pendidikan dan brand kesehatan nasional. Dengan konsep yang inovatif, target pengguna yang spesifik, serta dukungan teknologi yang memadai, Vitora memiliki potensi implementasi yang kuat sebagai platform self-improvement berbasis gamifikasi untuk membantu meningkatkan kualitas hidup remaja Indonesia.
+REFERENSI
+Anwar, T. G. D., & Sukirman. (2024). Pengembangan game edukasi dengan genre role playing game untuk mendukung pembelajaran sistem komputer. 
+Decode: Jurnal Pendidikan Teknologi Informasi
+, 
+4
+(1), 290–300. 
+https://journal.umkendari.ac.id/decode/article/view/353
+ 
+Clear, J. (2018). 
+Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones
+. Penguin Random House.
+Hamari, J., Hassan, L., & Dias, A. (2018). Gamification, quantified-self or social networking? Matching users' goals with motivational technology. 
+User Modeling and User-Adapted Interaction
+, 
+28
+(1), 35–74. 
+https://link.springer.com/article/10.1007/s11257-018-9200-2
+ 
+Ann Annis, Crista Reaves, Jessica Sender, & Sherry Bumpus. (2023). Health-Related Data Sources Accessible to Health Researchers From the US Government: Mapping Review. 
+Journal of Medical Internet Research
+, 
+25
+, e43802.
+https://www.jmir.org/2023/1/e43802
+ 
+ 
+Kementerian Kesehatan Republik Indonesia. (2023). 
+Laporan Riset Kesehatan Dasar (Riskesdas) 2023
+. Kemenkes RI.
+Ryan, R. M., & Deci, E. L. (2020). Intrinsic and extrinsic motivation from a self-determination theory perspective: Definitions, theory, practices, and future directions. 
+Contemporary Educational Psychology
+, 
+61
+, 101860. 
+https://doi.org/10.1016/j.cedpsych.2020.101860
+ 
+UNICEF Indonesia. (2022). 
+Situasi Anak di Indonesia: Tren, Peluang, dan Tantangan dalam Memenuhi Hak-Hak Anak
+. UNICEF.
+Vlachogianni, P., & Tselios, N. (2023). Perceived usability evaluation of educational technology using the Post-Study System Usability Questionnaire (PSSUQ): A systematic review. 
+Sustainability
+, 
+15
+(17), 12954. 
+https://doi.org/10.3390/su151712954
+World Health Organization. (2023). 
+Mental Health of Adolescents
+. WHO. 
+https://www.who.int/news-room/fact-sheets/detail/adolescent-mental-health
+Lampiran 
+1
+.
+ Poster Ukuran A2
+Gambar 
+3
+.
+ Poster Vitora
+.
+Lampiran 
+2
+.
+ Pernyataan Orisinalitas.
+Lampiran 
+3
+.
+ Formulir Pendaftaran.
+Lampiran 
+4
+. Lembar Pengesahan Proposal.
+Lampiran 
+5
+.
+ Biodata Dosen Pendamping dan Tim.
+Lampiran 
+6
+.
+ Mockup
+/Prototipe (Gambar Tangkapan Layar).
+TAMPILAN ANTARMUKA GAME VITORA
+Gambar 
+4
+.
+ Tampilan Halaman Login Vitora
+Gambar 
+5
+.
+ Tampilan Halaman Register Vitora
+Gambar 
+6
+.
+ Tampilan Halaman Dahboard Vitora
+Gambar 
+7
+.
+ Tampilan Halaman Mission Tutorial Vitora
+Gambar 
+8
+.
+ Tampilan Halaman List Mission Vitora
+Gambar 
+9
+.
+ Tampilan Halaman Quest List
+Gambar 
+10
+.
+ Tampilan Halaman Pemilihan Avatar Vitora
+Gambar 
+11
+.
+ Tampilan Halaman Leaderboard Vitora
+Lampiran 
+7
+.
+ Bagan 
+Alur Proses Pembuatan Inovasi.
+Gambar 
+12
+. Alur Inovasi Pembuatan Vitora
+Lampiran 
+8
+.
+ Data 
+Pendukung Dan Instrumen Uji
+.
+DATA PENDUKUNG DAN INSTRUMEN UJI
+DATA PENDUKUNG
+Data Penggunaan Smartphone dan Internet Remaja Indonesia
+Sumber Data
+Indikator
+Tahun
+Persentase
+/Data
+APJII(Asosiasi penyelenggara Jasa Internet Indonesia)
+Pengguna internet Indonesia
+2024
+>79% penduduk
+APJII
+Pengguna internet usia remaja
+2024
+Dominan Aktif
+DataReportal Indonesia
+Rata-rata penggunaan smartphone per hari
+2024
+>5 jam/hari
+BPS Indonesia
+Pengguna internet usia 13-24 tahun
+2023
+Tinggi
+Kemenkes RI
+Remaja dengan aktivitas fisik rendah
+2023
+Meningkat
+Data Permasalahan Kesehatan Remaja
+No
+Permasalahan
+Keterangan
+1
+Kurangnya aktivitas fisik
+Banyak remaja lebih sering bermain gadget disbanding olahraga
+2
+Pola tidur tidak teratur
+Penggunaan smartphone berlebihan menyebabkan kualitas tidur menurun
+3
+Tingkat stress remaja meningkat
+Tekanan akademik dan social mempengaruhi kesehatan mental 
+4
+Konsistensi hidup sehat rendah
+Remaja kesulitan mempertahankan kebiasaan sehat secara rutin
+5
+Interaksi social menurun
+Aktivitas digital mengurangi komunikasi social secara langsung
+Data Potensi Gamifikasi dalam Sel-Improvement
+Indikator
+Data
+Sumber
+Remaja lebih tertarik media interaktif
+Tinggi
+GML
+Penggunaan system reward meningkatkan motivasi
+Efektif
+JGS
+Gamifikasi meningkatkan engagement pengguna
+>60%
+UXR
+INSTRUMEN UJI
+Instrumen System Usability Scale (SUS)
+No
+Pernyataan
+Jenis
+1
+Saya rasa saya akan sering menggunakan sistem ini.
+Positif (+)
+2
+Saya merasa sistem ini terlalu rumit, padahal dapat dibuat lebih sederhana.
+Negatif (-)
+3
+Saya rasa sistem ini mudah digunakan.
+Positif (+)
+4
+Saya rasa saya membutuhkan bantuan orang teknis untuk menggunakan sistem.
+Negatif (-)
+5
+Saya merasa fitur-fitur dalam sistem ini terintegrasi dengan baik.
+Positif (+)
+6
+Saya rasa ada banyak hal yang tidak konsisten pada sistem ini.
+Negatif (-)
+7
+Saya rasa orang lain akan belajar menggunakan sistem ini dengan sangat cepat.
+Positif (+)
+8
+Saya merasa sistem ini sangat membingungkan saat digunakan.
+Negatif (-)
+9
+Saya merasa sangat percaya diri saat menggunakan sistem ini.
+Positif (+)
+10
+Saya perlu belajar banyak hal sebelum dapat menggunakan sistem ini.
+Negatif (-)
+Hasil pengujian SUS: Skor 80,25 — Grade B — Kategori Good (Acceptable) Referensi standar penilaian: Vlachogianni & Tselios (2023)
+Cara Penilaian SUS:
+Item positif (1,3,5,7,9): Skor = nilai responden − 1
+Item negatif (2,4,6,8,10): Skor = 5 − nilai responden
+Total skor dijumlahkan lalu dikali 2,5
+Skala jawaban: 1 (Sangat Tidak Setuju) — 5 (Sangat Setuju)
+Instrumen Pre-test & Post-test Vitora
+Kuesioner terdiri dari 10 soal pilihan ganda mencakup materi berikut:
+No
+Topik Soal
+Keterangan
+1
+Pentingnya hidup sehat
+Kesadaran kesehatan mental, fisik,dan sosial
+2
+Kebiasaan aktivitas fisik
+Aktivitas olahraga dan gaya hidup
+3
+Pola tidur remaja
+Kualitas dan keteraturan tidur
+4
+Manajemen stres
+Kemampuan mengelola tekanan dan emosi
+5
+Motivasi sel-improvement
+Keinginan memperbaiki diri secara konsisten
+6
+Pengaruh sistem reward
+Motivasi melalui poin dan hadiah
+7
+Pengaruh fitur challenge
+Konsistensi melalui tantangan harian
+8
+Pengaruh fitur sosial
+Dukungan teman dan leaderboard
+9
+Konsistensi kebiasaan sehat
+Kemampuan mempertahankan habit positif
+10
+Ketertarikan menggunakan Vitora
+Minat menggunakan game self-improvement
+Target keberhasilan:
+Minimal 70% pemain mengalami peningkatan skor ≥30% antara pre-test dan post-test
+Minimal 60% pemain menjawab benar ≥7 dari 10 soal pada follow-up 1 bulan pasca-permainan
+Prosedur Uji Coba
+No
+Tahapan
+Aktivitas
+Output
+1
+Rekrutmen Partisipan
+Seleksi remaja usia 13–24 tahun
+Min. 100 responden
+2
+Pre-test
+Pengisian kuesioner awal terkait kebiasaan sehat, aktivitas fisik, kesehatan mental, dan motivasi self-improvement
+Data baseline
+3
+Intervensi (Gameplay)
+Pengguna menjalankan misi Vitora seperti daily mission, habit tracking, challenge, dan leaderboard selama beberapa sesi
+Data aktivitas dan progress pengguna
+4
+Post-test
+Pengguna mengisi kuisioner setelah menggunakan Vitora
+Data perubahan perilaku dan motivasi 
+5
+Evaluasi Usability
+Pengisian kuesioner SUS (10 item)
+Skor usability
+6
+Feedback Kualitatif
+Focus Group Discussion (FGD)
+Catatan kritis naratif & mekanik
+7
+Analisis Data
+Statistik deskriptif & thematic analysis
+Laporan efektivitas
+Key Performance Indicators (KPI)
+No
+Indikator
+Target
+1
+Persentase pemain yang menyelesaikan minimal 5 misi dalam 30 hari pertama penggunaan
+70% pengguna
+2
+Persentase pemain yang melaporkan perubahan kebiasaan positif minimal 1 kategori Kesehatan pada follow-up 1 bulan
+60% pengguna
+3
+Skor 
+System Usability Scale
+ (SUS) pada pengujian lanjutan dengan sampel minimal 100 responden
+≥80
+4
+Rata-rata durasi waktu bermain yang dihabiskan pengguna per sesi
+≥15 menit
+5
+Persentase pemain yang berhasil menyelesaikan misi dari setidaknya kategori Kesehatan yang dipilih
+50% pengguna
+6
+Jumlah pengguna aktif dalam 6 bulan pertama
+1.000 pengguna
