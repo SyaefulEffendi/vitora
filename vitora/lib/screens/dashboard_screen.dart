@@ -34,6 +34,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       try {
         final profile = await UserService.getProfile(email);
         final missions = await MissionService.getMissions(email);
+        
+        // Prioritaskan misi yang sedang berjalan (underway)
+        missions.sort((a, b) {
+          if (a['user_status'] == 'underway' && b['user_status'] != 'underway') return -1;
+          if (a['user_status'] != 'underway' && b['user_status'] == 'underway') return 1;
+          return 0;
+        });
+
         setState(() {
           _userProfile = profile ?? widget.userData;
           _missions = missions;
@@ -336,10 +344,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               if (_isLoading)
                 const Center(child: CircularProgressIndicator())
-              else if (_missions.isEmpty)
-                const Center(child: Text('Belum ada misi tersedia.', style: TextStyle(color: Colors.grey)))
+              else if (_missions.where((m) => m['user_status'] != 'completed').isEmpty)
+                const Center(child: Text('Belum ada misi tersedia. Ayo ambil misi baru!', style: TextStyle(color: Colors.grey)))
               else
-                ..._missions.take(2).map((mission) => Padding(
+                ..._missions.where((m) => m['user_status'] != 'completed').take(2).map((mission) => Padding(
                   padding: const EdgeInsets.only(bottom: 15.0),
                   child: _buildQuestCard(
                     icon: _getCategoryIcon(mission['category']),
