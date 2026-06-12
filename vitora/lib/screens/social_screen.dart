@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../services/user_service.dart';
+import '../api/api_config.dart';
 import 'dashboard_screen.dart';
 import 'quests_screen.dart';
 import 'shop_screen.dart';
@@ -13,6 +17,41 @@ class SocialScreen extends StatefulWidget {
 }
 
 class _SocialScreenState extends State<SocialScreen> {
+  List<dynamic> _leaderboard = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLeaderboard();
+  }
+
+  Future<void> _loadLeaderboard() async {
+    try {
+      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/leaderboard'));
+      if (response.statusCode == 200) {
+        setState(() {
+          _leaderboard = jsonDecode(response.body)['leaderboard'];
+          _isLoading = false;
+        });
+      } else {
+        setState(() { _isLoading = false; });
+      }
+    } catch (e) {
+      setState(() { _isLoading = false; });
+    }
+  }
+
+  void _sendCheer(String targetEmail, String targetName) async {
+    final success = await UserService.sendCheer(targetEmail);
+    if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Berhasil memberikan cheer ke $targetName!')),
+      );
+      _loadLeaderboard(); // Reload to get updated cheers
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userAvatar = widget.userData?['avatar'] ?? 'avatar_0';
@@ -112,89 +151,100 @@ class _SocialScreenState extends State<SocialScreen> {
                   
                   const SizedBox(height: 40),
 
-                  // Podium Top 3
-                  SizedBox(
-                    height: 200,
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        // Rank 2
-                        Positioned(
-                          left: 0,
-                          bottom: 0,
-                          child: _buildPodiumItem(
-                            rank: 2,
-                            name: 'Luna_V',
-                            pts: '7,120',
-                            avatar: 'avatar_1',
-                            borderColor: const Color(0xFFC0C0C0), // Silver
-                            size: 80,
-                            ptsColor: const Color(0xFF008080),
-                          ),
-                        ),
-                        // Rank 3
-                        Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: _buildPodiumItem(
-                            rank: 3,
-                            name: 'Kora_Run',
-                            pts: '6,890',
-                            avatar: 'avatar_2',
-                            borderColor: const Color(0xFFCD7F32), // Bronze
-                            size: 80,
-                            ptsColor: const Color(0xFF008080),
-                          ),
-                        ),
-                        // Rank 1
-                        Positioned(
-                          top: 0,
-                          child: _buildPodiumItem(
-                            rank: 1,
-                            name: 'Zenith...',
-                            pts: '8,940 PTS',
-                            avatar: 'avatar_3',
-                            borderColor: const Color(0xFFFFD700), // Gold
-                            size: 110,
-                            isRank1: true,
-                            ptsColor: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 40),
 
-                  const SizedBox(height: 30),
+                  if (_isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else if (_leaderboard.isEmpty)
+                    const Center(child: Text("Belum ada data di Leaderboard"))
+                  else ...[
+                    // Podium Top 3
+                    if (_leaderboard.isNotEmpty)
+                      SizedBox(
+                        height: 200,
+                        child: Stack(
+                          alignment: Alignment.bottomCenter,
+                          children: [
+                            // Rank 2
+                            if (_leaderboard.length > 1)
+                              Positioned(
+                                left: 0,
+                                bottom: 0,
+                                child: _buildPodiumItem(
+                                  rank: 2,
+                                  name: _leaderboard[1]['nama'].split(' ')[0],
+                                  email: _leaderboard[1]['email'] ?? '',
+                                  pts: '${_leaderboard[1]['points']} PTS',
+                                  avatar: _leaderboard[1]['avatar'],
+                                  cheers: _leaderboard[1]['cheers'] ?? 0,
+                                  streak: _leaderboard[1]['streak'] ?? 1,
+                                  borderColor: const Color(0xFFC0C0C0), // Silver
+                                  size: 80,
+                                  ptsColor: const Color(0xFF008080),
+                                ),
+                              ),
+                            // Rank 3
+                            if (_leaderboard.length > 2)
+                              Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: _buildPodiumItem(
+                                  rank: 3,
+                                  name: _leaderboard[2]['nama'].split(' ')[0],
+                                  email: _leaderboard[2]['email'] ?? '',
+                                  pts: '${_leaderboard[2]['points']} PTS',
+                                  avatar: _leaderboard[2]['avatar'],
+                                  cheers: _leaderboard[2]['cheers'] ?? 0,
+                                  streak: _leaderboard[2]['streak'] ?? 1,
+                                  borderColor: const Color(0xFFCD7F32), // Bronze
+                                  size: 80,
+                                  ptsColor: const Color(0xFF008080),
+                                ),
+                              ),
+                            // Rank 1
+                            if (_leaderboard.length > 0)
+                              Positioned(
+                                top: 0,
+                                child: _buildPodiumItem(
+                                  rank: 1,
+                                  name: _leaderboard[0]['nama'].split(' ')[0],
+                                  email: _leaderboard[0]['email'] ?? '',
+                                  pts: '${_leaderboard[0]['points']} PTS',
+                                  avatar: _leaderboard[0]['avatar'],
+                                  cheers: _leaderboard[0]['cheers'] ?? 0,
+                                  streak: _leaderboard[0]['streak'] ?? 1,
+                                  borderColor: const Color(0xFFFFD700), // Gold
+                                  size: 110,
+                                  isRank1: true,
+                                  ptsColor: Colors.black87,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
 
-                  // List ranks
-                  _buildListRankItem(
-                    rank: '04.',
-                    name: 'Mars_O...',
-                    level: 'L42',
-                    streak: '12D STREAK',
-                    pts: '6540 PTS',
-                    avatar: 'avatar_4',
-                  ),
-                  const SizedBox(height: 15),
-                  
-                  _buildListRankItem(
-                    rank: '05.',
-                    name: 'Aura_Flow',
-                    level: 'L38',
-                    pts: '5910 PTS',
-                    avatar: 'avatar_5',
-                  ),
-                  const SizedBox(height: 15),
+                    const SizedBox(height: 30),
 
-                  _buildListRankItem(
-                    rank: '06.',
-                    name: 'Nova_Pu...',
-                    level: 'L35',
-                    streak: '3D STREAK',
-                    pts: '4200 PTS',
-                    avatar: 'avatar_6',
-                  ),
-                  const SizedBox(height: 10),
+                    // List ranks 4 and below
+                    ...List.generate(_leaderboard.length > 3 ? _leaderboard.length - 3 : 0, (index) {
+                      final item = _leaderboard[index + 3];
+                      return Column(
+                        children: [
+                          _buildListRankItem(
+                            rank: '${(index + 4).toString().padLeft(2, '0')}.',
+                            name: item['nama'].split(' ')[0],
+                            email: item['email'] ?? '',
+                            level: 'L${item['level']}',
+                            pts: '${item['points']} PTS',
+                            avatar: item['avatar'],
+                            cheers: item['cheers'] ?? 0,
+                            streak: '${item['streak']} Hari',
+                          ),
+                          const SizedBox(height: 15),
+                        ],
+                      );
+                    }),
+                  ],
                 ],
               ),
             ),
@@ -351,8 +401,11 @@ class _SocialScreenState extends State<SocialScreen> {
   Widget _buildPodiumItem({
     required int rank,
     required String name,
+    required String email,
     required String pts,
     required String avatar,
+    required int cheers,
+    required int streak,
     required Color borderColor,
     required double size,
     required Color ptsColor,
@@ -407,13 +460,41 @@ class _SocialScreenState extends State<SocialScreen> {
           ],
         ),
         const SizedBox(height: 15),
-        Text(
-          name,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: isRank1 ? 20 : 16, color: isRank1 ? const Color(0xFF006666) : Colors.black87),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              name,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: isRank1 ? 20 : 16, color: isRank1 ? const Color(0xFF006666) : Colors.black87),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.local_fire_department, color: Color(0xFFC2185B), size: 14),
+            Text('$streak', style: const TextStyle(color: Color(0xFFC2185B), fontWeight: FontWeight.bold, fontSize: 10)),
+          ],
         ),
         Text(
           pts,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: isRank1 ? 14 : 12, color: ptsColor),
+        ),
+        const SizedBox(height: 5),
+        GestureDetector(
+          onTap: () => _sendCheer(email, name),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.pink[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.pink[200]!),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.favorite, color: Colors.pink, size: 12),
+                const SizedBox(width: 4),
+                Text('$cheers', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.pink)),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -422,10 +503,12 @@ class _SocialScreenState extends State<SocialScreen> {
   Widget _buildListRankItem({
     required String rank,
     required String name,
+    required String email,
     required String level,
     String? streak,
     required String pts,
     required String avatar,
+    required int cheers,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -486,13 +569,23 @@ class _SocialScreenState extends State<SocialScreen> {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey[300]!),
-            ),
-            child: const Icon(Icons.bolt, color: Color(0xFF008080)),
+          Column(
+            children: [
+              GestureDetector(
+                onTap: () => _sendCheer(email, name),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.pink[50],
+                    border: Border.all(color: Colors.pink[200]!),
+                  ),
+                  child: const Icon(Icons.favorite, color: Colors.pink, size: 18),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text('$cheers cheers', style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold)),
+            ],
           ),
         ],
       ),

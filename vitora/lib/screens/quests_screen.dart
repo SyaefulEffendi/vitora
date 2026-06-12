@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dashboard_screen.dart';
 import 'shop_screen.dart';
 import 'social_screen.dart';
@@ -44,6 +45,66 @@ class _QuestsScreenState extends State<QuestsScreen> {
       });
     }
   }
+
+  Future<void> _startMission(int missionId) async {
+    final email = widget.userData?['email'] ?? '';
+    if (email.isNotEmpty) {
+      final success = await MissionService.startMission(email, missionId);
+      if (success) {
+        _loadMissions();
+      }
+    }
+  }
+
+  Future<void> _checkinMission(int missionId) async {
+    final email = widget.userData?['email'] ?? '';
+    if (email.isEmpty) return;
+
+    final ImagePicker picker = ImagePicker();
+    // Allow user to pick image from camera or gallery
+    final XFile? image = await picker.pickImage(source: ImageSource.camera); // or ImageSource.gallery
+
+    if (image != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Mengunggah bukti misi...')),
+        );
+      }
+
+      final success = await MissionService.checkinMission(email, missionId, image.path);
+
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Misi Selesai! Poin berhasil ditambahkan.')),
+        );
+        _loadMissions();
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Gagal check-in misi. Coba lagi.')),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Check-in dibatalkan, foto tidak dipilih.')),
+        );
+      }
+    }
+  }
+
+  Future<void> _failMission(int missionId) async {
+    final email = widget.userData?['email'] ?? '';
+    if (email.isNotEmpty) {
+      final success = await MissionService.failMission(email, missionId);
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Misi digagalkan. Poin disesuaikan ke checkpoint terdekat.')),
+        );
+        _loadMissions();
+      }
+    }
+  }
+
   int _selectedFilterIndex = 0;
 
   @override
@@ -330,6 +391,67 @@ class _QuestsScreenState extends State<QuestsScreen> {
                           '${mission['category'].toString().toUpperCase()}  •  ${mission['difficulty'].toString().toUpperCase()}',
                           style: const TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.bold, letterSpacing: 1.5),
                         ),
+                        if (mission['user_status'] == 'underway') ...[
+                          const SizedBox(height: 15),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () => _failMission(mission['id']),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red[50],
+                                    foregroundColor: Colors.red,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                  ),
+                                  child: const Text('Nyerah (Gagal)'),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () => _checkinMission(mission['id']),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF006666),
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                  ),
+                                  child: const Text('Check-in'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ] else if (mission['user_status'] == 'completed') ...[
+                          const SizedBox(height: 15),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.green[50],
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.green[200]!),
+                            ),
+                            child: const Center(
+                              child: Text('Selesai', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                        ] else ...[
+                          const SizedBox(height: 15),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () => _startMission(mission['id']),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF006666),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                              ),
+                              child: const Text('Mulai Misi'),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

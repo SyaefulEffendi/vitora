@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import date, datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)  # Allow frontend to communicate with backend
@@ -56,6 +57,22 @@ def init_db():
                     pass
                 try:
                     cursor.execute("ALTER TABLE users ADD COLUMN points INT DEFAULT 0")
+                except Exception:
+                    pass
+                try:
+                    cursor.execute("ALTER TABLE users ADD COLUMN inventory TEXT DEFAULT ''")
+                except Exception:
+                    pass
+                try:
+                    cursor.execute("ALTER TABLE users ADD COLUMN cheers INT DEFAULT 0")
+                except Exception:
+                    pass
+                try:
+                    cursor.execute("ALTER TABLE users ADD COLUMN streak INT DEFAULT 1")
+                except Exception:
+                    pass
+                try:
+                    cursor.execute("ALTER TABLE users ADD COLUMN last_login_date DATE")
                 except Exception:
                     pass
 
@@ -133,21 +150,18 @@ def register():
 
     try:
         with conn.cursor() as cursor:
-            # Check if email already exists
+            # Check if user already exists
             cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
             if cursor.fetchone():
                 return jsonify({'error': 'Email sudah terdaftar'}), 400
 
-            # Hash the password
-            hashed_password = generate_password_hash(password)
+            # Get current date
+            current_date = date.today().strftime('%Y-%m-%d')
 
             # Insert new user
-            insert_query = """
-            INSERT INTO users (nama, nomor_telepon, email, password_hash, avatar)
-            VALUES (%s, %s, %s, %s, %s)
-            """
-            cursor.execute(insert_query, (nama, nomor_telepon, email, hashed_password, avatar))
-        
+            hashed_password = generate_password_hash(password)
+            sql = "INSERT INTO users (nama, nomor_telepon, email, password_hash, avatar, last_login_date) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (nama, nomor_telepon, email, hashed_password, avatar, current_date))
         conn.commit()
         return jsonify({'message': 'Registrasi berhasil!'}), 201
     
@@ -176,18 +190,49 @@ def login():
             user = cursor.fetchone()
 
             if user and check_password_hash(user['password_hash'], password):
-                # Login successful
-                # For a real app, you'd generate a JWT token here. 
-                # For now, we just return success and basic user info.
-                user_info = {
+                # Streak Calculation
+                today = date.today()
+                
+                streak = user.get('streak', 1)
+                last_login = user.get('last_login_date')
+                
+                if last_login:
+                    if isinstance(last_login, str):
+                        try:
+                            last_login = datetime.strptime(last_login, '%Y-%m-%d').date()
+                        except:
+                            last_login = today
+                            
+                    delta = today - last_login
+                    if delta.days == 1:
+                        # Logged in yesterday, increment streak
+                        streak += 1
+                    elif delta.days > 1:
+                        # Missed a day, reset streak
+                        streak = 1
+                
+                # Update last_login_date and streak
+                cursor.execute("UPDATE users SET last_login_date = %s, streak = %s WHERE email = %s", (today.strftime('%Y-%m-%d'), streak, email))
+                conn.commit()
+
+                # Calculate level
+                points = user.get('points', 0)
+                level = (points // 250) + 1
+                next_level_points = level * 250
+                
+                user_data = {
                     'id': user['id'],
                     'nama': user['nama'],
                     'email': user['email'],
-                    'avatar': user['avatar']
+                    'avatar': user['avatar'],
+                    'focus_categories': user['focus_categories'],
+                    'points': points,
+                    'level': level,
+                    'next_level_points': next_level_points
                 }
                 return jsonify({
                     'message': 'Login berhasil',
-                    'user': user_info
+                    'user': user_data
                 }), 200
             else:
                 return jsonify({'error': 'Email atau password salah'}), 401
@@ -222,6 +267,216 @@ def save_categories():
     finally:
         conn.close()
 
+@app.route('/api/user/profile', methods=['GET'])
+def get_user_profile():
+    email = request.args.get('email')
+    if not email:
+        return jsonify({'error': 'Email diperlukan'}), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, nama, email, avatar, focus_categories, points, inventory, streak FROM users WHERE email = %s", (email,))
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({'error': 'User tidak ditemukan'}), 404
+            
+            # Calculate level: Level 1 starts at 0, Level 2 at 250, Level 3 at 500, etc.
+            points = user['points']
+            level = (points // 250) + 1
+            next_level_points = level * 250
+            streak = user.get('streak', 1)
+
+            user_info = {
+                'id': user['id'],
+                'nama': user['nama'],
+                'email': user['email'],
+                'avatar': user['avatar'],
+                'focus_categories': user['focus_categories'],
+                'inventory': user['inventory'] if user['inventory'] else '',
+                'points': points,
+                'level': level,
+                'streak': streak,
+                'next_level_points': next_level_points
+            }
+            return jsonify({'user': user_info}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/api/leaderboard', methods=['GET'])
+def get_leaderboard():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+
+    try:
+        with conn.cursor() as cursor:
+            # Get top 20 users by points
+            cursor.execute("SELECT id, nama, email, avatar, points, cheers, streak FROM users ORDER BY points DESC LIMIT 20")
+            users = cursor.fetchall()
+            
+            # Calculate levels for leaderboard
+            leaderboard = []
+            for u in users:
+                lvl = (u['points'] // 250) + 1
+                leaderboard.append({
+                    'id': u['id'],
+                    'nama': u['nama'],
+                    'email': u['email'],
+                    'avatar': u['avatar'],
+                    'points': u['points'],
+                    'cheers': u['cheers'] if 'cheers' in u else 0,
+                    'streak': u['streak'] if 'streak' in u else 1,
+                    'level': lvl
+                })
+            
+            return jsonify({'leaderboard': leaderboard}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/api/shop/redeem', methods=['POST'])
+def redeem_points():
+    data = request.get_json()
+    email = data.get('email')
+    cost = data.get('cost')
+    reward_name = data.get('reward_name')
+
+    if not email or cost is None:
+        return jsonify({'error': 'Email dan cost diperlukan'}), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+
+    try:
+        with conn.cursor() as cursor:
+            # Get current points
+            cursor.execute("SELECT points FROM users WHERE email = %s", (email,))
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({'error': 'User tidak ditemukan'}), 404
+            
+            if user['points'] < cost:
+                return jsonify({'error': 'Poin tidak cukup'}), 400
+
+            # Deduct points
+            new_points = user['points'] - cost
+            cursor.execute("UPDATE users SET points = %s WHERE email = %s", (new_points, email))
+        
+        conn.commit()
+        return jsonify({'message': f'Berhasil menukar {cost} poin untuk {reward_name}! Sisa poin: {new_points}'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/api/shop/buy_item', methods=['POST'])
+def buy_item():
+    data = request.get_json()
+    email = data.get('email')
+    cost = data.get('cost')
+    item_id = data.get('item_id')
+
+    if not email or cost is None or not item_id:
+        return jsonify({'error': 'Email, cost, dan item_id diperlukan'}), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+
+    try:
+        with conn.cursor() as cursor:
+            # Get current points and inventory
+            cursor.execute("SELECT points, inventory FROM users WHERE email = %s", (email,))
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({'error': 'User tidak ditemukan'}), 404
+            
+            if user['points'] < cost:
+                return jsonify({'error': 'Poin tidak cukup'}), 400
+
+            inventory = user['inventory'] if user['inventory'] else ''
+            
+            # Check if already owned
+            items = inventory.split(',') if inventory else []
+            if item_id in items:
+                return jsonify({'error': 'Item sudah dimiliki'}), 400
+
+            # Deduct points and add item
+            new_points = user['points'] - cost
+            items.append(item_id)
+            new_inventory = ','.join(filter(None, items))
+            
+            cursor.execute("UPDATE users SET points = %s, inventory = %s WHERE email = %s", (new_points, new_inventory, email))
+        
+        conn.commit()
+        return jsonify({'message': f'Berhasil membeli item! Sisa poin: {new_points}', 'inventory': new_inventory}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/api/social/cheer', methods=['POST'])
+def send_cheer():
+    data = request.get_json()
+    target_email = data.get('target_email')
+
+    if not target_email:
+        return jsonify({'error': 'Target email diperlukan'}), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+
+    try:
+        with conn.cursor() as cursor:
+            # Increment cheer count
+            cursor.execute("UPDATE users SET cheers = cheers + 1 WHERE email = %s", (target_email,))
+            if cursor.rowcount == 0:
+                return jsonify({'error': 'User tidak ditemukan'}), 404
+        
+        conn.commit()
+        return jsonify({'message': 'Berhasil memberikan cheer!'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/api/user/avatar', methods=['POST'])
+def update_avatar():
+    data = request.get_json()
+    email = data.get('email')
+    avatar_id = data.get('avatar_id')
+
+    if not email or not avatar_id:
+        return jsonify({'error': 'Email dan avatar_id diperlukan'}), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+
+    try:
+        with conn.cursor() as cursor:
+            # We don't check if they own the avatar right now for simplicity, 
+            # but ideally we would check against inventory.
+            cursor.execute("UPDATE users SET avatar = %s WHERE email = %s", (avatar_id, email))
+            if cursor.rowcount == 0:
+                return jsonify({'error': 'User tidak ditemukan'}), 404
+        
+        conn.commit()
+        return jsonify({'message': 'Avatar berhasil diperbarui!'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
 import os
 from werkzeug.utils import secure_filename
 
@@ -243,12 +498,22 @@ def get_missions():
                 cursor.execute("SELECT id, focus_categories FROM users WHERE email = %s", (email,))
                 user = cursor.fetchone()
                 if user:
+                    user_id = user['id']
                     categories = [cat.strip() for cat in user['focus_categories'].split(',') if cat.strip()]
+                    
+                    query = """
+                        SELECT m.*, um.status as user_status
+                        FROM missions m
+                        LEFT JOIN user_missions um ON m.id = um.mission_id AND um.user_id = %s
+                    """
+                    params = [user_id]
+                    
                     if categories:
                         format_strings = ','.join(['%s'] * len(categories))
-                        cursor.execute(f"SELECT * FROM missions WHERE category IN ({format_strings})", tuple(categories))
-                    else:
-                        cursor.execute("SELECT * FROM missions")
+                        query += f" WHERE m.category IN ({format_strings})"
+                        params.extend(categories)
+                        
+                    cursor.execute(query, tuple(params))
                 else:
                     cursor.execute("SELECT * FROM missions")
             else:
@@ -337,6 +602,50 @@ def checkin_mission():
 
         conn.commit()
         return jsonify({'message': 'Check-in berhasil, poin ditambahkan!'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/api/missions/fail', methods=['POST'])
+def fail_mission():
+    data = request.get_json()
+    email = data.get('email')
+    mission_id = data.get('mission_id')
+
+    if not email or not mission_id:
+        return jsonify({'error': 'Email dan mission_id diperlukan'}), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, points FROM users WHERE email = %s", (email,))
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({'error': 'User tidak ditemukan'}), 404
+
+            # Mark mission as failed
+            cursor.execute("""
+                UPDATE user_missions 
+                SET status = 'failed'
+                WHERE user_id = %s AND mission_id = %s AND status = 'underway'
+            """, (user['id'], mission_id))
+            
+            if cursor.rowcount == 0:
+                return jsonify({'error': 'Misi tidak ditemukan atau sudah selesai/gagal'}), 400
+
+            # Calculate new points with Checkpoint logic
+            current_points = user['points']
+            # Checkpoint is every 250 points
+            new_points = (current_points // 250) * 250
+            
+            cursor.execute("UPDATE users SET points = %s WHERE id = %s", (new_points, user['id']))
+
+        conn.commit()
+        return jsonify({'message': f'Misi gagal. Poin Anda diturunkan ke checkpoint terdekat ({new_points} PTS).', 'new_points': new_points}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:

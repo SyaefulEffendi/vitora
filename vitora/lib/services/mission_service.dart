@@ -52,4 +52,21 @@ class MissionService {
       return false;
     }
   }
+
+  static Future<bool> failMission(String email, int missionId) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.failMissionUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'mission_id': missionId,
+        }),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 }

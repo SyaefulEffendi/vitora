@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'quests_screen.dart';
 import 'social_screen.dart';
+import '../services/user_service.dart';
 
 class ShopScreen extends StatefulWidget {
   final Map<String, dynamic>? userData;
@@ -14,6 +15,61 @@ class ShopScreen extends StatefulWidget {
 
 class _ShopScreenState extends State<ShopScreen> {
   int _selectedFilterIndex = 0;
+  Map<String, dynamic>? _userProfile;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final email = widget.userData?['email'] ?? '';
+    if (email.isNotEmpty) {
+      try {
+        final profile = await UserService.getProfile(email);
+        setState(() {
+          _userProfile = profile ?? widget.userData;
+          _isLoading = false;
+        });
+      } catch (e) {
+        setState(() { _isLoading = false; });
+      }
+    } else {
+      setState(() { _isLoading = false; });
+    }
+  }
+
+  void _redeemEWallet() async {
+    _buyItemLogic(1000, 'wallet_10k', 'Saldo E-Wallet Rp10.000');
+  }
+
+  void _buyItemLogic(int cost, String itemId, String itemName) async {
+    final email = widget.userData?['email'] ?? '';
+    final points = _userProfile?['points'] ?? 0;
+    
+    if (points < cost) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Poin tidak cukup! Butuh $cost PTS.')),
+        );
+      }
+      return;
+    }
+
+    final success = await UserService.buyItem(email, cost, itemId);
+    if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Berhasil membeli $itemName!')),
+      );
+      _loadProfile(); // reload points and inventory
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gagal membeli item, atau sudah dimiliki')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,9 +178,9 @@ class _ShopScreenState extends State<ShopScreen> {
                                 child: const Icon(Icons.attach_money, size: 12, color: Color(0xFF008080)),
                               ),
                               const SizedBox(width: 8),
-                              const Text(
-                                '1,450 PTS',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
+                              Text(
+                                '${_userProfile?['points'] ?? 0} PTS',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
                               ),
                             ],
                           ),
@@ -183,32 +239,75 @@ class _ShopScreenState extends State<ShopScreen> {
                     _buildFilterChip(1, 'Kepala'),
                     const SizedBox(width: 15),
                     _buildFilterChip(2, 'Badan'),
+                    const SizedBox(width: 15),
+                    _buildFilterChip(3, 'E-Wallet'),
                   ],
                 ),
               ),
 
               const SizedBox(height: 25),
 
-              // Shop Items Grid
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildShopItemCard(
-                      image: 'assets/images/shop/item_hoodie.png',
-                      badgeText: 'EXPERT',
-                      badgeColor: const Color(0xFF993366),
-                    ),
+              if (_selectedFilterIndex == 3)
+                // E-Wallet Redemption Section
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFF00FFFF).withOpacity(0.5)),
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: _buildShopItemCard(
-                      image: 'assets/images/shop/item_hair.png',
-                      badgeText: 'EASY',
-                      badgeColor: const Color(0xFF008080),
-                    ),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.account_balance_wallet, size: 50, color: Color(0xFF008080)),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Voucher E-Wallet Rp10.000',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 5),
+                      const Text(
+                        'Harga: 1000 PTS',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      const SizedBox(height: 15),
+                      ElevatedButton(
+                        onPressed: _redeemEWallet,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF008080),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
+                        child: const Text('Tukar Sekarang', style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                )
+              else
+                // Shop Items Grid
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildShopItemCard(
+                        itemId: 'hoodie_expert',
+                        itemName: 'Hoodie Expert',
+                        cost: 500,
+                        image: 'assets/images/shop/item_hoodie.png',
+                        badgeText: 'EXPERT',
+                        badgeColor: const Color(0xFF993366),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: _buildShopItemCard(
+                        itemId: 'hair_easy',
+                        itemName: 'Rambut Biru',
+                        cost: 150,
+                        image: 'assets/images/shop/item_hair.png',
+                        badgeText: 'EASY',
+                        badgeColor: const Color(0xFF008080),
+                      ),
+                    ),
+                  ],
+                ),
               const SizedBox(height: 30),
             ],
           ),
@@ -338,57 +437,104 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   Widget _buildShopItemCard({
+    required String itemId,
+    required String itemName,
+    required int cost,
     required String image,
     required String badgeText,
     required Color badgeColor,
   }) {
-    return Container(
-      height: 180,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 5)),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Greyish inner background
-          Positioned(
-            top: 20, bottom: 20, left: 20, right: 20,
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0F5F5),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Center(
-                child: Image.asset(
-                  image,
-                  height: 100,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.checkroom, size: 50, color: Colors.grey),
+    final inventoryStr = _userProfile?['inventory']?.toString() ?? '';
+    final isOwned = inventoryStr.split(',').contains(itemId);
+
+    return GestureDetector(
+      onTap: isOwned ? null : () {
+        _buyItemLogic(cost, itemId, itemName);
+      },
+      child: Container(
+        height: 180,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          border: isOwned ? Border.all(color: Colors.green, width: 2) : null,
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 5)),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Greyish inner background
+            Positioned(
+              top: 20, bottom: 40, left: 20, right: 20,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0F5F5),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: Image.asset(
+                    image,
+                    height: 80,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.checkroom, size: 50, color: Colors.grey),
+                  ),
                 ),
               ),
             ),
-          ),
-          
-          // Badge
-          Positioned(
-            top: 15,
-            left: 15,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: badgeColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                badgeText,
-                style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+            
+            // Badge
+            Positioned(
+              top: 15,
+              left: 15,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: badgeColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  badgeText,
+                  style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
-          ),
-        ],
+
+            // Cost or Owned Status
+            Positioned(
+              bottom: 10,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isOwned ? Colors.green.withOpacity(0.1) : const Color(0xFF00FFFF).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isOwned ? Icons.check_circle : Icons.attach_money,
+                        size: 14,
+                        color: isOwned ? Colors.green : const Color(0xFF008080),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        isOwned ? 'Owned' : '$cost PTS',
+                        style: TextStyle(
+                          color: isOwned ? Colors.green : const Color(0xFF008080),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

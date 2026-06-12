@@ -10,4 +10,5 @@ class ApiConfig {
   static const String missionsUrl = '$baseUrl/missions';
   static const String startMissionUrl = '$baseUrl/missions/start';
   static const String checkinMissionUrl = '$baseUrl/missions/checkin';
+  static const String failMissionUrl = '$baseUrl/missions/fail';
 }
