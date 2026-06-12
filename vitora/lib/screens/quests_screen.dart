@@ -4,6 +4,7 @@ import 'dashboard_screen.dart';
 import 'shop_screen.dart';
 import 'social_screen.dart';
 import '../services/mission_service.dart';
+import '../services/user_service.dart';
 
 class QuestsScreen extends StatefulWidget {
   final Map<String, dynamic>? userData;
@@ -16,6 +17,7 @@ class QuestsScreen extends StatefulWidget {
 
 class _QuestsScreenState extends State<QuestsScreen> {
   List<dynamic> _missions = [];
+  Map<String, dynamic>? _userProfile;
   bool _isLoading = true;
 
   @override
@@ -28,8 +30,10 @@ class _QuestsScreenState extends State<QuestsScreen> {
     final email = widget.userData?['email'] ?? '';
     if (email.isNotEmpty) {
       try {
+        final profile = await UserService.getProfile(email);
         final missions = await MissionService.getMissions(email);
         setState(() {
+          _userProfile = profile ?? widget.userData;
           _missions = missions;
           _isLoading = false;
         });
@@ -109,7 +113,14 @@ class _QuestsScreenState extends State<QuestsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userAvatar = widget.userData?['avatar'] ?? 'avatar_0';
+    final userAvatar = _userProfile?['avatar'] ?? widget.userData?['avatar'] ?? 'avatar_0';
+    final points = _userProfile?['points'] ?? 0;
+    final level = _userProfile?['level'] ?? 1;
+    final nextLevelPoints = _userProfile?['next_level_points'] ?? 250;
+    
+    double rawProgress = nextLevelPoints > 0 ? points / nextLevelPoints : 0.0;
+    final double progress = rawProgress > 1.0 ? 1.0 : rawProgress;
+    final progressWidth = 200.0 * progress; // 200 is total bar width
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F9F9), // Very light cyan background
@@ -193,15 +204,15 @@ class _QuestsScreenState extends State<QuestsScreen> {
                               'LEVEL ',
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey),
                             ),
-                            const Text(
-                              '17',
-                              style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color(0xFF008080)),
+                            Text(
+                              '$level',
+                              style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color(0xFF008080)),
                             ),
                           ],
                         ),
-                        const Text(
-                          '2,450 / 3,000XP',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                        Text(
+                          '$points / ${nextLevelPoints}XP',
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                         ),
                       ],
                     ),
@@ -209,6 +220,7 @@ class _QuestsScreenState extends State<QuestsScreen> {
                     // Progress bar
                     Container(
                       height: 12,
+                      width: 200,
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(10),
@@ -216,7 +228,7 @@ class _QuestsScreenState extends State<QuestsScreen> {
                       child: Row(
                         children: [
                           Container(
-                            width: 200, // Approximated progress
+                            width: progressWidth, // Dynamic progress
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(colors: [Color(0xFF008080), Color(0xFF00FFFF)]),
                               borderRadius: BorderRadius.circular(10),
@@ -232,13 +244,19 @@ class _QuestsScreenState extends State<QuestsScreen> {
               const SizedBox(height: 25),
 
               // Filter Chips
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildFilterChip(0, 'Semua'),
-                  _buildFilterChip(1, 'Mental'),
-                  _buildFilterChip(2, 'Physical'),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildFilterChip(0, 'Semua'),
+                    const SizedBox(width: 10),
+                    _buildFilterChip(1, 'Mental'),
+                    const SizedBox(width: 10),
+                    _buildFilterChip(2, 'Social'),
+                    const SizedBox(width: 10),
+                    _buildFilterChip(3, 'Physical'),
+                  ],
+                ),
               ),
 
               const SizedBox(height: 25),
@@ -342,7 +360,13 @@ class _QuestsScreenState extends State<QuestsScreen> {
               else if (_missions.isEmpty)
                 const Center(child: Text('Belum ada misi tersedia.', style: TextStyle(color: Colors.grey)))
               else
-                ..._missions.map((mission) => Padding(
+                ..._missions.where((mission) {
+                  if (_selectedFilterIndex == 0) return true;
+                  if (_selectedFilterIndex == 1) return mission['category'] == 'Mental';
+                  if (_selectedFilterIndex == 2) return mission['category'] == 'Social';
+                  if (_selectedFilterIndex == 3) return mission['category'] == 'Physical';
+                  return true;
+                }).map((mission) => Padding(
                   padding: const EdgeInsets.only(bottom: 20.0),
                   child: Container(
                     padding: const EdgeInsets.all(20),
@@ -579,26 +603,26 @@ class _QuestsScreenState extends State<QuestsScreen> {
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'Mental': return const Color(0xFF008080);
-      case 'Fisik': return const Color(0xFFCC0000);
-      case 'Sosial': return const Color(0xFF3333FF);
+      case 'Physical': return const Color(0xFFCC0000);
+      case 'Social': return const Color(0xFFE68A00);
       default: return Colors.grey;
     }
   }
 
   Color _getCategoryBgColor(String category) {
     switch (category) {
-      case 'Mental': return const Color(0xFFE0FFFF);
-      case 'Fisik': return const Color(0xFFFBEAEA);
-      case 'Sosial': return const Color(0xFFEAEAFF);
-      default: return Colors.grey[200]!;
+      case 'Mental': return const Color(0xFFE6F2F2);
+      case 'Physical': return const Color(0xFFFBE6E6);
+      case 'Social': return const Color(0xFFFDF3E6);
+      default: return Colors.grey[100]!;
     }
   }
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
       case 'Mental': return Icons.psychology;
-      case 'Fisik': return Icons.fitness_center;
-      case 'Sosial': return Icons.people;
+      case 'Physical': return Icons.fitness_center;
+      case 'Social': return Icons.people;
       default: return Icons.star;
     }
   }
