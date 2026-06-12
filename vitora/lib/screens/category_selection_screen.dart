@@ -26,18 +26,18 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       'bgColor': const Color(0xFFE0FFFF),
     },
     {
-      'id': 'Fisik',
+      'id': 'Physical',
       'title': 'Kesehatan Fisik',
       'icon': Icons.fitness_center,
       'color': const Color(0xFFCC0000),
       'bgColor': const Color(0xFFFBEAEA),
     },
     {
-      'id': 'Sosial',
+      'id': 'Social',
       'title': 'Kesehatan Sosial',
       'icon': Icons.people,
-      'color': const Color(0xFF3333FF),
-      'bgColor': const Color(0xFFEAEAFF),
+      'color': const Color(0xFFE68A00),
+      'bgColor': const Color(0xFFFDF3E6),
     },
   ];
 
