@@ -370,7 +370,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 width: double.infinity,
                 height: 60,
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => QuestsScreen(userData: widget.userData)),
+                    );
+                  },
                   icon: const Icon(Icons.flash_on, color: Colors.white),
                   label: const Text(
                     'START NEW QUEST',
