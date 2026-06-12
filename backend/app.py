@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pymysql
+import sqlite3
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date, datetime, timedelta
 
@@ -8,24 +9,16 @@ app = Flask(__name__)
 CORS(app)  # Allow frontend to communicate with backend
 
 # Database Configuration
-# Using default XAMPP credentials (root, no password)
-DB_HOST = '127.0.0.1'
-DB_USER = 'root'
-DB_PASSWORD = ''
-DB_NAME = 'vitora'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'vitora.db')
 
 def get_db_connection():
     try:
-        connection = pymysql.connect(
-            host=DB_HOST,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            database=DB_NAME,
-            cursorclass=pymysql.cursors.DictCursor
-        )
-        return connection
-    except Exception as e:
-        print(f"Error connecting to database: {e}")
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        return conn
+    except sqlite3.Error as e:
+        print(f"Database connection error: {e}")
         return None
 
 def init_db():
@@ -33,11 +26,12 @@ def init_db():
     conn = get_db_connection()
     if conn:
         try:
-            with conn.cursor() as cursor:
+            cursor = conn.cursor()
+            if True:
                 # Table users
                 create_users_table = """
                 CREATE TABLE IF NOT EXISTS users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     nama VARCHAR(100) NOT NULL,
                     nomor_telepon VARCHAR(20) NOT NULL,
                     email VARCHAR(100) NOT NULL UNIQUE,
@@ -79,7 +73,7 @@ def init_db():
                 # Table missions
                 create_missions_table = """
                 CREATE TABLE IF NOT EXISTS missions (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     title VARCHAR(150) NOT NULL,
                     subtitle VARCHAR(255),
                     category VARCHAR(50) NOT NULL,
@@ -94,7 +88,7 @@ def init_db():
                 # Table user_missions
                 create_user_missions_table = """
                 CREATE TABLE IF NOT EXISTS user_missions (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INT NOT NULL,
                     mission_id INT NOT NULL,
                     status VARCHAR(20) DEFAULT 'underway',
@@ -111,14 +105,35 @@ def init_db():
                 cursor.execute("SELECT COUNT(*) as count FROM missions")
                 if cursor.fetchone()['count'] == 0:
                     dummy_missions = [
-                        ('Lari Pagi', 'Berlari selama 15 menit', 'Fisik', 'Medium', 20, 15),
-                        ('Meditasi', 'Lakukan meditasi selama 5 menit', 'Mental', 'Easy', 10, 5),
-                        ('Sapa Tetangga', 'Sapa 3 orang tetangga hari ini', 'Sosial', 'Easy', 10, 0),
-                        ('Workout Beban', 'Latihan angkat beban ringan', 'Fisik', 'Hard', 30, 30),
-                        ('Jurnal Syukur', 'Tulis 3 hal yang disyukuri', 'Mental', 'Medium', 15, 10),
-                        ('Kerja Bakti', 'Ikut kegiatan bersih-bersih lingkungan', 'Sosial', 'Expert', 50, 60),
+                        # MENTAL HEALTH
+                        ('Jurnal Stres', 'Tulis 3 hal yang membuatmu stres hari ini', 'Mental', 'Easy', 5, 5),
+                        ('Pernapasan 4-7-8', 'Lakukan teknik pernapasan 4-7-8 sebelum tidur', 'Mental', 'Easy', 5, 5),
+                        ('Journaling Bebas', 'Lakukan journaling bebas tentang perasaanmu', 'Mental', 'Medium', 10, 15),
+                        ('Grounding Technique', 'Terapkan teknik grounding 5-4-3-2-1', 'Mental', 'Medium', 10, 5),
+                        ('No Complain Day', 'Jalani satu hari penuh tanpa mengeluh', 'Mental', 'Hard', 20, 1440),
+                        ('Manajemen Stres 14 Hari', 'Konsisten jalani rutinitas manajemen stres', 'Mental', 'Expert', 50, 20160),
+                        ('Tidur Tepat Waktu', 'Tidur sebelum jam 23.00 malam ini', 'Mental', 'Easy', 5, 480),
+                        ('Gratitude Journal', 'Tulis 3 hal yang disyukuri hari ini', 'Mental', 'Easy', 5, 5),
+                        
+                        # SOCIAL HEALTH
+                        ('Asertif: Berpendapat', 'Ungkapkan satu pendapatmu dengan jelas dan sopan', 'Social', 'Easy', 5, 5),
+                        ('Katakan Tidak', 'Katakan tidak untuk permintaan di luar kapasitas', 'Social', 'Easy', 5, 5),
+                        ('Minta Bantuan', 'Minta bantuan atau apa yang kamu butuhkan langsung', 'Social', 'Medium', 10, 5),
+                        ('Quality Time Keluarga', 'Makan bersama keluarga tanpa pegang HP', 'Social', 'Easy', 5, 30),
+                        ('Active Listening', 'Dengarkan orang lain bercerita tanpa menyela', 'Social', 'Medium', 10, 15),
+                        ('Sapa Teman Lama', 'Hubungi teman lama hanya untuk say hi', 'Social', 'Easy', 5, 5),
+                        ('Volunteer Sehari', 'Ikuti kegiatan sosial/volunteer', 'Social', 'Medium', 10, 180),
+                        
+                        # PHYSICAL HEALTH
+                        ('Jalan Kaki 10 Menit', 'Jalan kaki minimal 10 menit tanpa tujuan', 'Physical', 'Easy', 5, 10),
+                        ('Naik Tangga', 'Gunakan tangga sebagai ganti lift/eskalator', 'Physical', 'Easy', 5, 5),
+                        ('5000 Langkah', 'Capai 5.000 langkah hari ini', 'Physical', 'Medium', 10, 120),
+                        ('Olahraga 30 Menit', 'Jalani olahraga rutin 30 menit hari ini', 'Physical', 'Hard', 20, 30),
+                        ('Minum 2 Liter Air', 'Penuhi kebutuhan air putih 2 liter hari ini', 'Physical', 'Medium', 10, 1440),
+                        ('Sarapan Sehat', 'Makan sarapan sebelum jam 09.00', 'Physical', 'Easy', 5, 15),
+                        ('Aturan 20-20-20', 'Terapkan aturan istirahat mata setiap 20 menit', 'Physical', 'Medium', 10, 20)
                     ]
-                    insert_mission = "INSERT INTO missions (title, subtitle, category, difficulty, points, duration_minutes) VALUES (%s, %s, %s, %s, %s, %s)"
+                    insert_mission = "INSERT INTO missions (title, subtitle, category, difficulty, points, duration_minutes) VALUES (?, ?, ?, ?, ?, ?)"
                     cursor.executemany(insert_mission, dummy_missions)
 
             conn.commit()
@@ -149,9 +164,10 @@ def register():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
+        cursor = conn.cursor()
+        if True:
             # Check if user already exists
-            cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+            cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
             if cursor.fetchone():
                 return jsonify({'error': 'Email sudah terdaftar'}), 400
 
@@ -160,7 +176,7 @@ def register():
 
             # Insert new user
             hashed_password = generate_password_hash(password)
-            sql = "INSERT INTO users (nama, nomor_telepon, email, password_hash, avatar, last_login_date) VALUES (%s, %s, %s, %s, %s, %s)"
+            sql = "INSERT INTO users (nama, nomor_telepon, email, password_hash, avatar, last_login_date) VALUES (?, ?, ?, ?, ?, ?)"
             cursor.execute(sql, (nama, nomor_telepon, email, hashed_password, avatar, current_date))
         conn.commit()
         return jsonify({'message': 'Registrasi berhasil!'}), 201
@@ -185,9 +201,11 @@ def login():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
-            user = cursor.fetchone()
+        cursor = conn.cursor()
+        if True:
+            cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+            user_row = cursor.fetchone()
+            user = dict(user_row) if user_row else None
 
             if user and check_password_hash(user['password_hash'], password):
                 # Streak Calculation
@@ -212,7 +230,7 @@ def login():
                         streak = 1
                 
                 # Update last_login_date and streak
-                cursor.execute("UPDATE users SET last_login_date = %s, streak = %s WHERE email = %s", (today.strftime('%Y-%m-%d'), streak, email))
+                cursor.execute("UPDATE users SET last_login_date = ?, streak = ? WHERE email = ?", (today.strftime('%Y-%m-%d'), streak, email))
                 conn.commit()
 
                 # Calculate level
@@ -256,8 +274,9 @@ def save_categories():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
-            cursor.execute("UPDATE users SET focus_categories = %s WHERE email = %s", (categories, email))
+        cursor = conn.cursor()
+        if True:
+            cursor.execute("UPDATE users SET focus_categories = ? WHERE email = ?", (categories, email))
             if cursor.rowcount == 0:
                 return jsonify({'error': 'User tidak ditemukan'}), 404
         conn.commit()
@@ -278,9 +297,11 @@ def get_user_profile():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT id, nama, email, avatar, focus_categories, points, inventory, streak FROM users WHERE email = %s", (email,))
-            user = cursor.fetchone()
+        cursor = conn.cursor()
+        if True:
+            cursor.execute("SELECT id, nama, email, avatar, focus_categories, points, inventory, streak FROM users WHERE email = ?", (email,))
+            user_row = cursor.fetchone()
+            user = dict(user_row) if user_row else None
             if not user:
                 return jsonify({'error': 'User tidak ditemukan'}), 404
             
@@ -315,10 +336,12 @@ def get_leaderboard():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
+        cursor = conn.cursor()
+        if True:
             # Get top 20 users by points
             cursor.execute("SELECT id, nama, email, avatar, points, cheers, streak FROM users ORDER BY points DESC LIMIT 20")
-            users = cursor.fetchall()
+            users_rows = cursor.fetchall()
+            users = [dict(row) for row in users_rows]
             
             # Calculate levels for leaderboard
             leaderboard = []
@@ -356,10 +379,12 @@ def redeem_points():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
+        cursor = conn.cursor()
+        if True:
             # Get current points
-            cursor.execute("SELECT points FROM users WHERE email = %s", (email,))
-            user = cursor.fetchone()
+            cursor.execute("SELECT points FROM users WHERE email = ?", (email,))
+            user_row = cursor.fetchone()
+            user = dict(user_row) if user_row else None
             if not user:
                 return jsonify({'error': 'User tidak ditemukan'}), 404
             
@@ -368,7 +393,7 @@ def redeem_points():
 
             # Deduct points
             new_points = user['points'] - cost
-            cursor.execute("UPDATE users SET points = %s WHERE email = %s", (new_points, email))
+            cursor.execute("UPDATE users SET points = ? WHERE email = ?", (new_points, email))
         
         conn.commit()
         return jsonify({'message': f'Berhasil menukar {cost} poin untuk {reward_name}! Sisa poin: {new_points}'}), 200
@@ -392,10 +417,12 @@ def buy_item():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
+        cursor = conn.cursor()
+        if True:
             # Get current points and inventory
-            cursor.execute("SELECT points, inventory FROM users WHERE email = %s", (email,))
-            user = cursor.fetchone()
+            cursor.execute("SELECT points, inventory FROM users WHERE email = ?", (email,))
+            user_row = cursor.fetchone()
+            user = dict(user_row) if user_row else None
             if not user:
                 return jsonify({'error': 'User tidak ditemukan'}), 404
             
@@ -414,7 +441,7 @@ def buy_item():
             items.append(item_id)
             new_inventory = ','.join(filter(None, items))
             
-            cursor.execute("UPDATE users SET points = %s, inventory = %s WHERE email = %s", (new_points, new_inventory, email))
+            cursor.execute("UPDATE users SET points = ?, inventory = ? WHERE email = ?", (new_points, new_inventory, email))
         
         conn.commit()
         return jsonify({'message': f'Berhasil membeli item! Sisa poin: {new_points}', 'inventory': new_inventory}), 200
@@ -436,9 +463,10 @@ def send_cheer():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
+        cursor = conn.cursor()
+        if True:
             # Increment cheer count
-            cursor.execute("UPDATE users SET cheers = cheers + 1 WHERE email = %s", (target_email,))
+            cursor.execute("UPDATE users SET cheers = cheers + 1 WHERE email = ?", (target_email,))
             if cursor.rowcount == 0:
                 return jsonify({'error': 'User tidak ditemukan'}), 404
         
@@ -463,10 +491,11 @@ def update_avatar():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
+        cursor = conn.cursor()
+        if True:
             # We don't check if they own the avatar right now for simplicity, 
             # but ideally we would check against inventory.
-            cursor.execute("UPDATE users SET avatar = %s WHERE email = %s", (avatar_id, email))
+            cursor.execute("UPDATE users SET avatar = ? WHERE email = ?", (avatar_id, email))
             if cursor.rowcount == 0:
                 return jsonify({'error': 'User tidak ditemukan'}), 404
         
@@ -492,24 +521,27 @@ def get_missions():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
+        cursor = conn.cursor()
+        if True:
             # Get user info and focus categories
             if email:
-                cursor.execute("SELECT id, focus_categories FROM users WHERE email = %s", (email,))
-                user = cursor.fetchone()
+                cursor.execute("SELECT id, focus_categories FROM users WHERE email = ?", (email,))
+                user_row = cursor.fetchone()
+                user = dict(user_row) if user_row else None
                 if user:
                     user_id = user['id']
                     categories = [cat.strip() for cat in user['focus_categories'].split(',') if cat.strip()]
+                    categories = ['Physical' if c == 'Fisik' else 'Social' if c == 'Sosial' else c for c in categories]
                     
                     query = """
                         SELECT m.*, um.status as user_status
                         FROM missions m
-                        LEFT JOIN user_missions um ON m.id = um.mission_id AND um.user_id = %s
+                        LEFT JOIN user_missions um ON m.id = um.mission_id AND um.user_id = ?
                     """
                     params = [user_id]
                     
                     if categories:
-                        format_strings = ','.join(['%s'] * len(categories))
+                        format_strings = ','.join(['?'] * len(categories))
                         query += f" WHERE m.category IN ({format_strings})"
                         params.extend(categories)
                         
@@ -519,7 +551,8 @@ def get_missions():
             else:
                 cursor.execute("SELECT * FROM missions")
             
-            missions = cursor.fetchall()
+            missions_rows = cursor.fetchall()
+            missions = [dict(row) for row in missions_rows]
             return jsonify({'missions': missions}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -537,18 +570,20 @@ def start_mission():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
-            user = cursor.fetchone()
+        cursor = conn.cursor()
+        if True:
+            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+            user_row = cursor.fetchone()
+            user = dict(user_row) if user_row else None
             if not user:
                 return jsonify({'error': 'User tidak ditemukan'}), 404
 
             # Check if already underway
-            cursor.execute("SELECT id FROM user_missions WHERE user_id = %s AND mission_id = %s AND status = 'underway'", (user['id'], mission_id))
+            cursor.execute("SELECT id FROM user_missions WHERE user_id = ? AND mission_id = ? AND status = 'underway'", (user['id'], mission_id))
             if cursor.fetchone():
                 return jsonify({'error': 'Misi sudah berjalan'}), 400
 
-            cursor.execute("INSERT INTO user_missions (user_id, mission_id, status) VALUES (%s, %s, 'underway')", (user['id'], mission_id))
+            cursor.execute("INSERT INTO user_missions (user_id, mission_id, status) VALUES (?, ?, 'underway')", (user['id'], mission_id))
         conn.commit()
         return jsonify({'message': 'Misi dimulai'}), 200
     except Exception as e:
@@ -578,27 +613,30 @@ def checkin_mission():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
 
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
-            user = cursor.fetchone()
+        cursor = conn.cursor()
+        if True:
+            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+            user_row = cursor.fetchone()
+            user = dict(user_row) if user_row else None
             if not user:
                 return jsonify({'error': 'User tidak ditemukan'}), 404
 
             # Mark mission as completed
             cursor.execute("""
                 UPDATE user_missions 
-                SET status = 'completed', proof_image_path = %s, completed_at = CURRENT_TIMESTAMP
-                WHERE user_id = %s AND mission_id = %s AND status = 'underway'
+                SET status = 'completed', proof_image_path = ?, completed_at = CURRENT_TIMESTAMP
+                WHERE user_id = ? AND mission_id = ? AND status = 'underway'
             """, (file_path, user['id'], mission_id))
             
             if cursor.rowcount == 0:
                 return jsonify({'error': 'Misi tidak ditemukan atau sudah selesai'}), 400
 
             # Add points
-            cursor.execute("SELECT points FROM missions WHERE id = %s", (mission_id,))
-            mission = cursor.fetchone()
+            cursor.execute("SELECT points FROM missions WHERE id = ?", (mission_id,))
+            mission_row = cursor.fetchone()
+            mission = dict(mission_row) if mission_row else None
             if mission:
-                cursor.execute("UPDATE users SET points = points + %s WHERE id = %s", (mission['points'], user['id']))
+                cursor.execute("UPDATE users SET points = points + ? WHERE id = ?", (mission['points'], user['id']))
 
         conn.commit()
         return jsonify({'message': 'Check-in berhasil, poin ditambahkan!'}), 200
@@ -621,9 +659,11 @@ def fail_mission():
         return jsonify({'error': 'Database connection failed'}), 500
 
     try:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT id, points FROM users WHERE email = %s", (email,))
-            user = cursor.fetchone()
+        cursor = conn.cursor()
+        if True:
+            cursor.execute("SELECT id, points FROM users WHERE email = ?", (email,))
+            user_row = cursor.fetchone()
+            user = dict(user_row) if user_row else None
             if not user:
                 return jsonify({'error': 'User tidak ditemukan'}), 404
 
@@ -631,7 +671,7 @@ def fail_mission():
             cursor.execute("""
                 UPDATE user_missions 
                 SET status = 'failed'
-                WHERE user_id = %s AND mission_id = %s AND status = 'underway'
+                WHERE user_id = ? AND mission_id = ? AND status = 'underway'
             """, (user['id'], mission_id))
             
             if cursor.rowcount == 0:
@@ -642,7 +682,7 @@ def fail_mission():
             # Checkpoint is every 250 points
             new_points = (current_points // 250) * 250
             
-            cursor.execute("UPDATE users SET points = %s WHERE id = %s", (new_points, user['id']))
+            cursor.execute("UPDATE users SET points = ? WHERE id = ?", (new_points, user['id']))
 
         conn.commit()
         return jsonify({'message': f'Misi gagal. Poin Anda diturunkan ke checkpoint terdekat ({new_points} PTS).', 'new_points': new_points}), 200
