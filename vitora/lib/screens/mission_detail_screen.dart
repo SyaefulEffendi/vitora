@@ -5,6 +5,7 @@ import 'quests_screen.dart';
 import 'shop_screen.dart';
 import 'social_screen.dart';
 import '../services/mission_service.dart';
+import '../services/notification_service.dart';
 
 class MissionDetailScreen extends StatefulWidget {
   final Map<String, dynamic>? userData;
@@ -31,6 +32,12 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
         _isLoading = false;
         if (success) {
           _isUnderway = true;
+          int notifId = int.tryParse(missionId.toString()) ?? 0;
+          NotificationService.showOngoingMissionNotification(
+            notifId, 
+            'Misi Vitora Berjalan', 
+            'Selesaikan misi: ${widget.missionData?['title'] ?? 'Misi'}'
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal memulai misi atau misi sudah berjalan.')));
         }
@@ -52,6 +59,8 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
         setState(() {
           _isLoading = false;
           if (success) {
+            int notifId = int.tryParse(missionId.toString()) ?? 0;
+            NotificationService.cancelNotification(notifId);
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Berhasil Check-in! Poin ditambahkan.')));
             Navigator.pop(context); // Go back to refresh list
           } else {
@@ -108,12 +117,6 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Color(0xFF006666)),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
