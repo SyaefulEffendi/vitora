@@ -146,10 +146,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(width: 15),
             ],
           ),
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Color(0xFF006666)),
-            onPressed: () {},
-          ),
         ],
       ),
       body: SafeArea(
@@ -352,13 +348,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     title: mission['title'],
                     subtitle: mission['subtitle'] ?? '',
                     points: '+${mission['points']} PTS',
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => MissionDetailScreen(userData: widget.userData, missionData: mission),
                         ),
                       );
+                      if (mounted) {
+                        _loadData();
+                      }
                     },
                   ),
                 )).toList(),

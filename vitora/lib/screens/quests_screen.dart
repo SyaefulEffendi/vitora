@@ -161,19 +161,16 @@ class _QuestsScreenState extends State<QuestsScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Color(0xFF006666)),
-            onPressed: () {},
-          ),
-        ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+      body: RefreshIndicator(
+        onRefresh: _loadMissions,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
               // Misi Aktif Card
               Container(
                 padding: const EdgeInsets.all(25),
@@ -484,6 +481,7 @@ class _QuestsScreenState extends State<QuestsScreen> {
             ],
           ),
         ),
+      ),
       ),
       
       // Bottom Navigation Bar

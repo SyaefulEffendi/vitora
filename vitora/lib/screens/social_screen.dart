@@ -95,12 +95,6 @@ class _SocialScreenState extends State<SocialScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Color(0xFF006666)),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Stack(
         children: [

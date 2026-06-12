@@ -114,12 +114,6 @@ class _ShopScreenState extends State<ShopScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Color(0xFF006666)),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -189,7 +183,7 @@ class _ShopScreenState extends State<ShopScreen> {
                     ),
                     
                     Positioned(
-                      top: 50,
+                      bottom: 10,
                       right: 0,
                       left: 0,
                       child: Row(
