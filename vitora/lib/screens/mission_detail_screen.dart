@@ -211,43 +211,8 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
               ),
 
               const SizedBox(height: 25),
-
-              // Sub-missions
-              _buildSubMissionCard(
-                title: 'EASY',
-                subtitle: 'Lakukan meditasi selama 5 menit',
-                points: '+20 PTS',
-                progress: 0.75,
-                progressText: '75%',
-                icon: Icons.water_drop_outlined,
-                iconColor: Colors.black87,
-                iconBgColor: const Color(0xFFD4F1F4),
-              ),
-              const SizedBox(height: 15),
-
-              _buildSubMissionCard(
-                title: 'MEDIUM',
-                subtitle: 'Lakukan meditasi selama 5 menit',
-                points: '+30 PTS',
-                progress: 0.75,
-                progressText: '75%',
-                icon: Icons.eco_outlined,
-                iconColor: Colors.black87,
-                iconBgColor: const Color(0xFFD9F4D4),
-              ),
-              const SizedBox(height: 15),
-
-              _buildSubMissionCard(
-                title: 'HARD',
-                subtitle: 'Lakukan meditasi selama 5 menit',
-                points: '+100 PTS',
-                progress: 0.75,
-                progressText: '75%',
-                icon: Icons.local_florist_outlined, // lotus like
-                iconColor: Colors.black87,
-                iconBgColor: const Color(0xFFFFD1D1),
-              ),
-              const SizedBox(height: 30),
+              // Sub-missions removed because they are not applicable to the current mission structure
+              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -342,85 +307,6 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
             },
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSubMissionCard({
-    required String title,
-    required String subtitle,
-    required String points,
-    required double progress,
-    required String progressText,
-    required IconData icon,
-    required Color iconColor,
-    required Color iconBgColor,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blueGrey.withOpacity(0.02),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: iconBgColor,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: iconColor, size: 28),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: Colors.black87)),
-                    const SizedBox(height: 5),
-                    Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE6F9FA),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(points, style: const TextStyle(color: Color(0xFF008080), fontWeight: FontWeight.bold, fontSize: 11)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Row(
-            children: [
-              Expanded(
-                child: LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: Colors.grey[200],
-                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF006666)),
-                  minHeight: 6,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Text(progressText, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black87)),
-            ],
-          )
-        ],
       ),
     );
   }
