@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
         height: double.infinity,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/backgrounds/background-login-regis.png'),
+            image: AssetImage('assets/images/backgrounds/log.jpg'),
             fit: BoxFit.cover,
           ),
         ),
