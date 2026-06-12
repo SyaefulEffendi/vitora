@@ -2,7 +2,8 @@ class ApiConfig {
   // Ganti IP ini dengan IP Address komputer server (komputer tempat XAMPP/Flask berjalan)
   // Untuk emulator Android berjalan di mesin yang sama, gunakan 10.0.2.2
   // Untuk web browser atau device fisik, gunakan IP Address jaringan (misal: 192.168.1.x)
-  static const String baseUrl = 'http://10.0.2.2:5000/api';
+  // static const String baseUrl = 'http://10.0.2.2:5000/api';
+  static const String baseUrl = 'https://syaefuleffendi.pythonanywhere.com/api';
 
   static const String registerUrl = '$baseUrl/register';
   static const String loginUrl = '$baseUrl/login';
