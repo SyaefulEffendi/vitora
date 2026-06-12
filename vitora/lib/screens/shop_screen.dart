@@ -239,58 +239,20 @@ class _ShopScreenState extends State<ShopScreen> {
                     _buildFilterChip(1, 'Kepala'),
                     const SizedBox(width: 15),
                     _buildFilterChip(2, 'Badan'),
-                    const SizedBox(width: 15),
-                    _buildFilterChip(3, 'E-Wallet'),
                   ],
                 ),
               ),
 
               const SizedBox(height: 25),
-
-              if (_selectedFilterIndex == 3)
-                // E-Wallet Redemption Section
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFF00FFFF).withOpacity(0.5)),
-                  ),
-                  child: Column(
-                    children: [
-                      const Icon(Icons.account_balance_wallet, size: 50, color: Color(0xFF008080)),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Voucher E-Wallet Rp10.000',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      const Text(
-                        'Harga: 1000 PTS',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      const SizedBox(height: 15),
-                      ElevatedButton(
-                        onPressed: _redeemEWallet,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF008080),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        ),
-                        child: const Text('Tukar Sekarang', style: TextStyle(color: Colors.white)),
-                      ),
-                    ],
-                  ),
-                )
-              else
                 // Shop Items Grid
                 Row(
                   children: [
                     Expanded(
                       child: _buildShopItemCard(
                         itemId: 'hoodie_expert',
-                        itemName: 'Hoodie Expert',
+                        itemName: 'Grey Hoodie',
                         cost: 500,
-                        image: 'assets/images/shop/item_hoodie.png',
+                        image: 'assets/images/shop/item_hoodie.jpg',
                         badgeText: 'EXPERT',
                         badgeColor: const Color(0xFF993366),
                       ),
@@ -299,9 +261,9 @@ class _ShopScreenState extends State<ShopScreen> {
                     Expanded(
                       child: _buildShopItemCard(
                         itemId: 'hair_easy',
-                        itemName: 'Rambut Biru',
+                        itemName: 'Curly Wig',
                         cost: 150,
-                        image: 'assets/images/shop/item_hair.png',
+                        image: 'assets/images/shop/item_hair.jpg',
                         badgeText: 'EASY',
                         badgeColor: const Color(0xFF008080),
                       ),
