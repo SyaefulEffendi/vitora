@@ -161,7 +161,7 @@ class _SocialScreenState extends State<SocialScreen> {
                     // Podium Top 3
                     if (_leaderboard.isNotEmpty)
                       SizedBox(
-                        height: 200,
+                        height: 250,
                         child: Stack(
                           alignment: Alignment.bottomCenter,
                           children: [
