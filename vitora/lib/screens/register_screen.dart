@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../api/api_config.dart';
-import 'category_selection_screen.dart';
+import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -62,11 +62,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (response.statusCode == 201) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registrasi Berhasil! Silakan pilih kategori fokusmu.'), backgroundColor: Colors.green),
+          const SnackBar(content: Text('Registrasi Berhasil! Silakan login.'), backgroundColor: Colors.green),
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => CategorySelectionScreen(email: email)),
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       } else {
         if (!mounted) return;

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../api/api_config.dart';
 import 'register_screen.dart';
-import 'dashboard_screen.dart';
+import 'category_selection_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => DashboardScreen(userData: data['user']),
+            builder: (context) => CategorySelectionScreen(userData: data['user']),
           ),
         );
       } else {

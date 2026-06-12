@@ -3,11 +3,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../api/api_config.dart';
 import 'login_screen.dart';
+import 'dashboard_screen.dart';
 
 class CategorySelectionScreen extends StatefulWidget {
-  final String email;
+  final Map<String, dynamic> userData;
 
-  const CategorySelectionScreen({super.key, required this.email});
+  const CategorySelectionScreen({super.key, required this.userData});
 
   @override
   State<CategorySelectionScreen> createState() => _CategorySelectionScreenState();
@@ -70,7 +71,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         Uri.parse(ApiConfig.categoriesUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'email': widget.email,
+          'email': widget.userData['email'],
           'categories': categoriesString,
         }),
       );
@@ -79,12 +80,14 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
       if (response.statusCode == 200) {
         if (!mounted) return;
+        // Update user data with new categories before navigating
+        widget.userData['focus_categories'] = categoriesString;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kategori berhasil disimpan! Silakan Login.'), backgroundColor: Colors.green),
+          const SnackBar(content: Text('Kategori berhasil disimpan!'), backgroundColor: Colors.green),
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => DashboardScreen(userData: widget.userData)),
         );
       } else {
         if (!mounted) return;
