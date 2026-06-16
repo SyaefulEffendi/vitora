@@ -4,6 +4,7 @@ import 'dashboard_screen.dart';
 import 'quests_screen.dart';
 import 'shop_screen.dart';
 import 'social_screen.dart';
+import 'profile_screen.dart';
 import '../services/mission_service.dart';
 import '../services/notification_service.dart';
 
@@ -83,8 +84,17 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
         automaticallyImplyLeading: false, // We'll customize it if needed, or just rely on bottom nav
         title: Row(
           children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black87),
+              onPressed: () => Navigator.pop(context),
+            ),
             GestureDetector(
-              onTap: () => Navigator.pop(context), // Allows returning to dashboard
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen(userData: widget.userData)),
+                );
+              },
               child: Container(
                 padding: const EdgeInsets.all(2),
                 decoration: const BoxDecoration(

@@ -6,6 +6,7 @@ import '../api/api_config.dart';
 import 'dashboard_screen.dart';
 import 'quests_screen.dart';
 import 'shop_screen.dart';
+import 'profile_screen.dart';
 
 class SocialScreen extends StatefulWidget {
   final Map<String, dynamic>? userData;
@@ -64,22 +65,38 @@ class _SocialScreenState extends State<SocialScreen> {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(2),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF00FFFF),
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/images/avatars/$userAvatar.png',
-                  width: 36,
-                  height: 36,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const CircleAvatar(
-                    radius: 18,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, color: Colors.black87),
+            GestureDetector(
+              onTap: () async {
+                final updatedAvatar = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen(userData: widget.userData)),
+                );
+                if (updatedAvatar != null && mounted) {
+                  setState(() {
+                    if (widget.userData != null) {
+                      widget.userData!['avatar'] = updatedAvatar;
+                    }
+                  });
+                  _loadLeaderboard();
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFF00FFFF),
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/avatars/$userAvatar.png',
+                    width: 36,
+                    height: 36,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const CircleAvatar(
+                      radius: 18,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, color: Colors.black87),
+                    ),
                   ),
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dashboard_screen.dart';
 import 'shop_screen.dart';
 import 'social_screen.dart';
+import 'profile_screen.dart';
 import '../services/mission_service.dart';
 import '../services/user_service.dart';
 
@@ -130,22 +131,38 @@ class _QuestsScreenState extends State<QuestsScreen> {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(2),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF00FFFF),
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/images/avatars/$userAvatar.png',
-                  width: 36,
-                  height: 36,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const CircleAvatar(
-                    radius: 18,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, color: Colors.black87),
+            GestureDetector(
+              onTap: () async {
+                final updatedAvatar = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen(userData: _userProfile ?? widget.userData)),
+                );
+                if (updatedAvatar != null && mounted) {
+                  setState(() {
+                    if (_userProfile != null) {
+                      _userProfile!['avatar'] = updatedAvatar;
+                    }
+                  });
+                  _loadMissions();
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFF00FFFF),
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/avatars/$userAvatar.png',
+                    width: 36,
+                    height: 36,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const CircleAvatar(
+                      radius: 18,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, color: Colors.black87),
+                    ),
                   ),
                 ),
               ),
